@@ -7,7 +7,7 @@ class CalibredbTest < Minitest::Test
     refute_nil ::Calibredb::VERSION
   end
 
-  def test_it_does_something_useful
-    assert false
+  def test_that_it_has_models
+    refute_nil ::Calibredb::MODELS
   end
 end
