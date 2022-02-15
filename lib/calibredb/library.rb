@@ -21,6 +21,22 @@ module Calibredb
           self.const_get(@models[table.to_s])
         end
 
+        def self.connect
+          path = File.join(@path, "metadata.db")
+          Sequel.connect(**Calibredb.db_opts(path)) do |database| 
+            MODELS.each do |table, model|
+              self.const_set(model, Class.new(Sequel::Model))
+              self.const_get(model).dataset = database[table.to_sym]
+            end
+
+            models = Calibredb::Models.new(self)
+            MODELS.each do |table, model|
+              next if table == "custom_columns"
+              models.send(table)
+            end
+          end
+        end
+
         def self.name
           @name
         end

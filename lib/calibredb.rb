@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 require 'sequel'
 require 'sqlite3'
-require 'configatron'
 require 'yaml'
 
 require_relative "calibredb/version"
@@ -52,6 +51,15 @@ module Calibredb
     self.libraries[library.to_s]
   end
 
+  def db_opts(path)
+    {adapter: "sqlite", database: path, readonly: true}
+  end
+
+  def connect_to_database
+    Sequel.connect(**db_opts(path)) do |database| 
+    end
+  end
+
   def connect
     configure
     @libraries.each_key do |library|
@@ -59,29 +67,13 @@ module Calibredb
       next if lib_db.path.nil?
 
       path = File.join(lib_db.path, "metadata.db")
-      Sequel.connect(
-        adapter: "sqlite",
-        database: path,
-        readonly: true
-      ) do |database|
-
+      Sequel.connect(**db_opts(path)) do |database| 
         MODELS.each do |table, model|
           lib_db.const_set(model, Class.new(Sequel::Model))
           lib_db.const_get(model).dataset = database[table.to_sym]
         end
 
-        author_associations(lib_db)
-        book_associations(lib_db)
-        comment_associations(lib_db)
-        data_associations(lib_db)
-        identifier_associations(lib_db)
-        language_associations(lib_db)
-        publisher_associations(lib_db)
-        rating_associations(lib_db)
-        series_associations(lib_db)
-        tag_associations(lib_db)
-
-        custom_column_models(lib_db, database, library)
+        #custom_column_models(lib_db, database, library)
       end
     end
   end
