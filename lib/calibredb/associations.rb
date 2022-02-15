@@ -22,10 +22,8 @@ module Calibredb
 
     def add_to_models(label, library)
       custom = {label => constantize(label)}
-      #lib = Calibredb.libraries[library]
       library.custom_columns = library.custom_columns.merge(custom)
       library.models = library.models.merge(custom)
-      #Calibredb::CUSTOM_COLUMNS[label] = constant
     end
 
     def custom_column_many_to_many(model, col, label)
