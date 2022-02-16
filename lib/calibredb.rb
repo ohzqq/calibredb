@@ -9,6 +9,7 @@ module Calibredb
   autoload :Associations, 'calibredb/associations'
   autoload :Models, 'calibredb/models'
   autoload :Library, 'calibredb/library'
+  autoload :CustomColumns, 'calibredb/custom_columns'
 
   include Calibredb::Associations
 
@@ -53,11 +54,6 @@ module Calibredb
 
   def db_opts(path)
     {adapter: "sqlite", database: path, readonly: true}
-  end
-
-  def connect_to_database
-    Sequel.connect(**db_opts(path)) do |database| 
-    end
   end
 
   def connect

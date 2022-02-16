@@ -34,6 +34,9 @@ module Calibredb
               next if table == "custom_columns"
               models.send(table)
             end
+
+            CustomColumns.new(database, self).models
+            #custom_column_models(lib_db, database, library)
           end
         end
 
