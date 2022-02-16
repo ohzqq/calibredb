@@ -10,6 +10,7 @@ module Calibredb
   autoload :Models, 'calibredb/models'
   autoload :Library, 'calibredb/library'
   autoload :CustomColumns, 'calibredb/custom_columns'
+  autoload :CustomColumn, 'calibredb/custom_column'
 
   attr_accessor :libraries
 

@@ -3,7 +3,7 @@ module Calibredb
     extend self
 
     def configure(name, const, meta)
-      lib = Calibredb.const_set(const, lib_module)
+      lib = Calibredb.const_set(const, library)
       lib.name = name
       lib.path = meta["path"]
       lib.audiobooks = meta["audiobooks"]
@@ -11,7 +11,7 @@ module Calibredb
       lib.models = MODELS
     end
 
-    def lib_module
+    def library
       Module.new do
         def self.[](table)
           self.const_get(@models[table.to_s])
@@ -22,23 +22,34 @@ module Calibredb
         end
 
         def self.connect
-          path = File.join(@path, "metadata.db")
-          db_opts = {adapter: "sqlite", database: path, readonly: true}
+          Sequel.connect(
+            {
+              adapter: "sqlite",
+              database: File.join(@path, "metadata.db"),
+              readonly: true
+            }
+          ) do |database| 
 
-          Sequel.connect(**db_opts) do |database| 
-            MODELS.each do |table, model|
-              self.send(:remove_const, model) if self.const_defined?(model)
-              self.const_set(model, Class.new(Sequel::Model))
-              self.const_get(model).dataset = database[table.to_sym]
-            end
-
-            models = Calibredb::Associations.new(self)
-            MODELS.each do |table, model|
-              next if table == "custom_columns"
-              models.send(table)
-            end
-
+            self.db_models(database)
+            self.associations
             CustomColumns.new(database, self).models
+          end
+        end
+
+        def self.db_models(database)
+          MODELS.each do |table, model|
+            self.send(:remove_const, model) if self.const_defined?(model)
+
+            self.const_set(model, Class.new(Sequel::Model))
+            self.const_get(model).dataset = database[table.to_sym]
+          end
+        end
+
+        def self.associations
+          models = Calibredb::Associations.new(self)
+          MODELS.each do |table, model|
+            next if table == "custom_columns"
+            models.send(table)
           end
         end
 
