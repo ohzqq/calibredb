@@ -15,6 +15,8 @@ module Calibredb
 
         add_to_models({label => model})
 
+        @library.send(:remove_const, model) if @library.const_defined?(model)
+
         klass = Class.new(Sequel::Model)
         @library.const_set(model, klass)
         @library.const_get(model).dataset = @db[table]

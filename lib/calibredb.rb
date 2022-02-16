@@ -11,8 +11,6 @@ module Calibredb
   autoload :Library, 'calibredb/library'
   autoload :CustomColumns, 'calibredb/custom_columns'
 
-  include Calibredb::Associations
-
   attr_accessor :libraries
 
   extend self
@@ -31,12 +29,6 @@ module Calibredb
     "comments" => :Comment
   }
 
-  CUSTOM_COLUMNS = {}
-
-  def read_config
-    YAML.safe_load_file("tmp/config.yml")
-  end
-
   def configure(libraries: nil)
     libraries ||= read_config
 
@@ -52,26 +44,12 @@ module Calibredb
     self.libraries[library.to_s]
   end
 
-  def db_opts(path)
-    {adapter: "sqlite", database: path, readonly: true}
+  def connect
+    @libraries.each_key { |library| @libraries[library].connect }
   end
 
-  def connect
-    configure
-    @libraries.each_key do |library|
-      lib_db = db(library)
-      next if lib_db.path.nil?
-
-      path = File.join(lib_db.path, "metadata.db")
-      Sequel.connect(**db_opts(path)) do |database| 
-        MODELS.each do |table, model|
-          lib_db.const_set(model, Class.new(Sequel::Model))
-          lib_db.const_get(model).dataset = database[table.to_sym]
-        end
-
-        #custom_column_models(lib_db, database, library)
-      end
-    end
+  def read_config
+    YAML.safe_load_file("tmp/config.yml")
   end
 
   def constantize(name)

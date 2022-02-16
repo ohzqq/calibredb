@@ -23,20 +23,22 @@ module Calibredb
 
         def self.connect
           path = File.join(@path, "metadata.db")
-          Sequel.connect(**Calibredb.db_opts(path)) do |database| 
+          db_opts = {adapter: "sqlite", database: path, readonly: true}
+
+          Sequel.connect(**db_opts) do |database| 
             MODELS.each do |table, model|
+              self.send(:remove_const, model) if self.const_defined?(model)
               self.const_set(model, Class.new(Sequel::Model))
               self.const_get(model).dataset = database[table.to_sym]
             end
 
-            models = Calibredb::Models.new(self)
+            models = Calibredb::Associations.new(self)
             MODELS.each do |table, model|
               next if table == "custom_columns"
               models.send(table)
             end
 
             CustomColumns.new(database, self).models
-            #custom_column_models(lib_db, database, library)
           end
         end
 
