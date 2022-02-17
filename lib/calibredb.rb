@@ -40,10 +40,6 @@ module Calibredb
     end
   end
 
-  def default
-    @libraries.take(1).to_h
-  end
-
   def db(library)
     self.libraries[library.to_s]
   end
