@@ -18,6 +18,7 @@ module Calibredb
         col = CustomColumn.new(@library, @db, custom_column)
         col.model
         col.associations
+        col.dataset_module
       end
     end
 

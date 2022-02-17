@@ -3,10 +3,14 @@ module Calibredb
     module Shared
       extend self
 
-      def data_with_default_order
+      def shared_modules
         @model.dataset_module do
           def data
             default
+          end
+
+          def library
+            Calibredb.const_get(default.model.to_s.split("::")[1])
           end
         end
       end

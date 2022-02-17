@@ -2,11 +2,11 @@
 require 'sequel'
 require 'sqlite3'
 require 'yaml'
+require 'json'
 
 require_relative "calibredb/version"
 
 module Calibredb
-  autoload :Associations, 'calibredb/associations'
   autoload :Model, 'calibredb/model'
   autoload :Library, 'calibredb/library'
   autoload :Dataset, 'calibredb/dataset'

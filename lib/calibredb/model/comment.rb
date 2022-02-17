@@ -1,7 +1,7 @@
 module Calibredb
   module Model
     class Comment
-      include Calibredb::Model::Shared
+      include Calibredb::Model
 
       def initialize(library)
         @library = library
@@ -21,6 +21,7 @@ module Calibredb
         @model.dataset_module do
           order :default, :text
         end
+        shared_dataset_modules
       end
     end
   end

@@ -2,7 +2,7 @@
 module Calibredb
   module Model
     class Identifier
-      include Calibredb::Model::Shared
+      include Calibredb::Model
 
       def initialize(library)
         @library = library
@@ -22,6 +22,7 @@ module Calibredb
         @model.dataset_module do
           order :default, :val
         end
+        shared_dataset_modules
       end
     end
   end

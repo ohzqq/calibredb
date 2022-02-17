@@ -48,9 +48,9 @@ module Calibredb
         def self.associations
           #models = Calibredb::Associations.new(self)
           MODELS.each do |table, model|
-            next if table == "custom_columns"
+            #next if table == "custom_columns"
             m = Calibredb::Model.const_get(model).new(self)
-            m.associations
+            m.associations unless table == "custom_columns"
             m.dataset_module
             #models.send(table)
           end

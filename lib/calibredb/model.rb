@@ -3,6 +3,7 @@ module Calibredb
     autoload :Author, 'calibredb/model/author'
     autoload :Book, 'calibredb/model/book'
     autoload :Comment, 'calibredb/model/comment'
+    autoload :CustomColumn, 'calibredb/model/custom_column'
     autoload :Datum, 'calibredb/model/datum'
     autoload :Identifier, 'calibredb/model/identifier'
     autoload :Language, 'calibredb/model/language'
@@ -13,20 +14,18 @@ module Calibredb
     autoload :Shared, 'calibredb/model/shared'
     autoload :Tag, 'calibredb/model/tag'
 
-    def sort_by_book_count(data)
-      data
-        .map {|d| [d.books_dataset.count, d.id]}
-        .sort
-        .map(&:last)
-    end
-        
-    def sorted_book_count_map(cols, sorted)
-      result = []
-      sorted.each do |id|
-        result << cols[id]
+    def shared_dataset_modules
+      @model.dataset_module do
+        def data
+          default
+        end
+
+        def library
+          Calibredb.const_get(default.model.to_s.split("::")[1])
+        end
       end
-      result
     end
+
   end
 end
 

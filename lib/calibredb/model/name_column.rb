@@ -1,7 +1,7 @@
 module Calibredb
   module Model
     module NameColumn
-      include Calibredb::Model::Shared
+      include Calibredb::Model
 
       def dataset_module
         @model.def_column_alias(:value, :name)
@@ -16,7 +16,7 @@ module Calibredb
             )
           end
         end
-        data_with_default_order
+        shared_dataset_modules
       end
     end
   end

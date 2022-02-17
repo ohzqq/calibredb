@@ -1,7 +1,7 @@
 module Calibredb
   module Model
     class Book
-      include Calibredb::Model::Shared
+        include Calibredb::Model
 
       def initialize(library)
         @library = library
@@ -14,17 +14,12 @@ module Calibredb
       end
 
       def dataset_module
-        data_with_default_order
         @model.dataset_module do
           order :default, :sort
           order :modified, :last_modified
           order :pubdate, :pubdate
           order :added, :timestamp
         
-          def library
-            Calibredb.const_get(default.model.to_s.split("::")[1])
-          end
-
           def query(query, sort = :default)
             opts = {all_patterns: true, case_insensitive: true}
             query = query.split(" ").map {|q| "%#{q}%"}
@@ -55,6 +50,7 @@ module Calibredb
               .or(narrators: library.const_get(:Narrators).grep(:value, query, opts))
           end
         end
+        shared_dataset_modules
       end
 
       def many_to_many
