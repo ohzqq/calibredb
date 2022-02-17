@@ -32,7 +32,7 @@ module Calibredb
     @libraries = {}
     libraries.each do |name, meta|
       const = constantize(name)
-      Library.configure(name, const, meta)
+      Library.configure(name, const, meta.transform_keys(&:to_s))
       @libraries[name] = self.const_get(const)
     end
   end
