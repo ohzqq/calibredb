@@ -74,6 +74,30 @@ module Calibredb
           end
         end
 
+        def editable?
+          row.editable
+        end
+
+        def datatype
+          row.datatype
+        end
+
+        def name
+          row.name
+        end
+
+        def mark_for_delete?
+          row.mark_for_delete
+        end
+
+        def normalized?
+          row.normalized
+        end
+
+        def column_id
+          row.id
+        end
+
         def description
           display["description"]
         end
