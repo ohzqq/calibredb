@@ -1,6 +1,8 @@
 module Calibredb
   module Model
     class Book
+      include Calibredb::Model::Shared
+
       def initialize(library)
         @library = library
         @model = library.const_get(:Book)
@@ -12,17 +14,22 @@ module Calibredb
       end
 
       def dataset_module
+        data_with_default_order
         @model.dataset_module do
           order :default, :sort
           order :modified, :last_modified
           order :pubdate, :pubdate
           order :added, :timestamp
+        
+          def library
+            Calibredb.const_get(default.model.to_s.split("::")[1])
+          end
 
           def query(query, sort = :default)
             opts = {all_patterns: true, case_insensitive: true}
             query = query.split(" ").map {|q| "%#{q}%"}
             results =
-              if Calibredb.libraries[lib.current.name].audiobooks == true
+              if library.audiobooks == true
                 audiobooks(query, opts, sort)
               else
                 ebooks(query, opts, sort)
@@ -30,22 +37,22 @@ module Calibredb
           end
 
           def ebooks(query, opts, sort)
-            data(sort)
+            data
               .grep(:title, query, opts)
-              .or(tags: lib.current.db["tags"].grep(:name, query, opts))
-              .or(authors: lib.current.db["authors"].grep(:name, query, opts))
-              .or(comments: lib.current.db["comments"].grep(:text, query, opts))
-              .or(series: lib.current.db["series"].grep(:name, query, opts))
+              .or(tags: library.const_get(:Tag).grep(:name, query, opts))
+              .or(authors: library.const_get(:Author).grep(:name, query, opts))
+              .or(comments: library.const_get(:Comment).grep(:text, query, opts))
+              .or(series: library.const_get(:Series).grep(:name, query, opts))
           end
 
           def audiobooks(query, opts, sort)
             data
               .grep(:title, query, opts)
-              .or(tags: lib.current.db["tags"].grep(:name, query, opts))
-              .or(authors: lib.current.db["authors"].grep(:name, query, opts))
-              .or(comments: lib.current.db["comments"].grep(:text, query, opts))
-              .or(series: lib.current.db["series"].grep(:name, query, opts))
-              .or(narrators: lib.current.db["narrators"].grep(:value, query, opts))
+              .or(tags: library.const_get(:Tag).grep(:name, query, opts))
+              .or(authors: library.const_get(:Author).grep(:name, query, opts))
+              .or(comments: library.const_get(:Comment).grep(:text, query, opts))
+              .or(series: library.const_get(:Series).grep(:name, query, opts))
+              .or(narrators: library.const_get(:Narrators).grep(:value, query, opts))
           end
         end
       end

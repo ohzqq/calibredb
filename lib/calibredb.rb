@@ -9,6 +9,7 @@ module Calibredb
   autoload :Associations, 'calibredb/associations'
   autoload :Model, 'calibredb/model'
   autoload :Library, 'calibredb/library'
+  autoload :Dataset, 'calibredb/dataset'
   autoload :CustomColumns, 'calibredb/custom_columns'
   autoload :CustomColumn, 'calibredb/custom_column'
 
@@ -19,15 +20,15 @@ module Calibredb
   MODELS = {
     "authors" => :Author,
     "books" => :Book,
-    "tags" => :Tag,
-    "series" => :Series,
-    "publishers" => :Publisher,
-    "languages" => :Language,
-    "ratings" => :Rating,
-    "identifiers" => :Identifier,
-    "data" => :Datum,
+    "comments" => :Comment,
     "custom_columns" => :CustomColumn,
-    "comments" => :Comment
+    "data" => :Datum,
+    "identifiers" => :Identifier,
+    "languages" => :Language,
+    "publishers" => :Publisher,
+    "ratings" => :Rating,
+    "series" => :Series,
+    "tags" => :Tag
   }
 
   def configure(libraries: nil)

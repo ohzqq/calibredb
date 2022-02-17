@@ -1,11 +1,17 @@
 module Calibredb
   module Model
     autoload :Author, 'calibredb/model/author'
-    autoload :Tag, 'calibredb/model/tag'
-    autoload :Publisher, 'calibredb/model/publisher'
-    autoload :Series, 'calibredb/model/series'
+    autoload :Book, 'calibredb/model/book'
+    autoload :Comment, 'calibredb/model/comment'
+    autoload :Datum, 'calibredb/model/datum'
+    autoload :Identifier, 'calibredb/model/identifier'
+    autoload :Language, 'calibredb/model/language'
     autoload :NameColumn, 'calibredb/model/name_column'
+    autoload :Publisher, 'calibredb/model/publisher'
+    autoload :Rating, 'calibredb/model/rating'
+    autoload :Series, 'calibredb/model/series'
     autoload :Shared, 'calibredb/model/shared'
+    autoload :Tag, 'calibredb/model/tag'
 
     def sort_by_book_count(data)
       data
