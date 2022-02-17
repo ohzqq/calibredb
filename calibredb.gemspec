@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email = ["ozhqq@riseup.net"]
 
   spec.summary = "A library using Sequel to interact with a Calibre database."
-  spec.description = "Write a longer description or delete this line."
+  spec.description = "The library comes with audiobook support built-in."
   spec.homepage = "https://github.com/ohzqq/calibredb"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
@@ -32,6 +32,8 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "example-gem", "~> 1.0"
   spec.add_dependency 'sequel', '~> 5.52.0'
   spec.add_dependency 'sqlite3', '~> 1.4.2'
+  spec.add_dependency 'yaml', '~> 0.2.0'
+  spec.add_dependency 'json', '~> 2.6.1'
 
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html

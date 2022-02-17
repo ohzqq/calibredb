@@ -1,8 +1,5 @@
 # frozen_string_literal: true
-require 'sequel'
-require 'sqlite3'
-require 'yaml'
-require 'json'
+Bundler.require(:default)
 
 require_relative "calibredb/version"
 
