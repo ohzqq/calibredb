@@ -31,7 +31,9 @@ module Calibredb
 
       def dataset_module
         @model = @library.const_get(@model_constant)
+
         shared_dataset_modules
+
         unless @model.columns.include?(:book)
           many_to_many_modules
         end

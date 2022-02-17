@@ -9,7 +9,6 @@ require_relative "calibredb/version"
 module Calibredb
   autoload :Model, 'calibredb/model'
   autoload :Library, 'calibredb/library'
-  autoload :CustomColumns, 'calibredb/custom_columns'
   autoload :CustomColumn, 'calibredb/custom_column'
 
   attr_accessor :libraries
@@ -30,8 +29,8 @@ module Calibredb
     "tags" => :Tag
   }
 
-  def configure(libraries: nil)
-    libraries ||= read_config
+  def configure(libraries: nil, config: nil)
+    libraries ||= read_config(config)
 
     @libraries = {}
     libraries.each do |name, meta|
@@ -39,6 +38,10 @@ module Calibredb
       Library.configure(name, const, meta)
       @libraries[name] = self.const_get(const)
     end
+  end
+
+  def default
+    @libraries.take(1).to_h
   end
 
   def db(library)
@@ -49,8 +52,8 @@ module Calibredb
     @libraries.each_key { |library| @libraries[library].connect }
   end
 
-  def read_config
-    YAML.safe_load_file("tmp/config.yml")
+  def read_config(config)
+    YAML.safe_load_file(config)
   end
 
   def constantize(name)
