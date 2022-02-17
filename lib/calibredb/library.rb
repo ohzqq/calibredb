@@ -36,26 +36,6 @@ module Calibredb
           end
         end
 
-        def self.db_models(database)
-          MODELS.each do |table, model|
-            self.send(:remove_const, model) if self.const_defined?(model)
-
-            self.const_set(model, Class.new(Sequel::Model))
-            self.const_get(model).dataset = database[table.to_sym]
-          end
-        end
-
-        def self.associations
-          #models = Calibredb::Associations.new(self)
-          MODELS.each do |table, model|
-            #next if table == "custom_columns"
-            m = Calibredb::Model.const_get(model).new(self)
-            m.associations unless table == "custom_columns"
-            m.dataset_module
-            #models.send(table)
-          end
-        end
-
         def self.name
           @name
         end
@@ -94,6 +74,25 @@ module Calibredb
 
         def self.models=(models)
           @models = models
+        end
+
+        private
+
+        def self.db_models(database)
+          MODELS.each do |table, model|
+            self.send(:remove_const, model) if self.const_defined?(model)
+
+            self.const_set(model, Class.new(Sequel::Model))
+            self.const_get(model).dataset = database[table.to_sym]
+          end
+        end
+
+        def self.associations
+          MODELS.each do |table, model|
+            m = Calibredb::Model.const_get(model).new(self)
+            m.associations unless table == "custom_columns"
+            m.dataset_module
+          end
         end
       end
     end

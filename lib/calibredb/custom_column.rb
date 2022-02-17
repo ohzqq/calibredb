@@ -124,8 +124,7 @@ module Calibredb
         left_key: :value, 
         right_key: :book, 
         join_table: :"books_#{@table}_link",
-        class: @book,
-        order: :sort
+        class: @book
       )
 
       @book.many_to_many(

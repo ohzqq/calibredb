@@ -9,7 +9,6 @@ require_relative "calibredb/version"
 module Calibredb
   autoload :Model, 'calibredb/model'
   autoload :Library, 'calibredb/library'
-  autoload :Dataset, 'calibredb/dataset'
   autoload :CustomColumns, 'calibredb/custom_columns'
   autoload :CustomColumn, 'calibredb/custom_column'
 

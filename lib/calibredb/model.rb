@@ -25,7 +25,6 @@ module Calibredb
         end
       end
     end
-
   end
 end
 
