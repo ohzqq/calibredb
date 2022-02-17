@@ -32,7 +32,7 @@ module Calibredb
 
             self.db_models(database)
             self.associations
-            CustomColumns.new(database, self).models
+            CustomColumn.models(database, self) #.models
           end
         end
 
