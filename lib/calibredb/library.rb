@@ -89,6 +89,7 @@ module Calibredb
 
         def self.associations
           MODELS.each do |table, model|
+            next if table == "preferences"
             m = Calibredb::Model.const_get(model).new(self)
             m.associations unless table == "custom_columns"
             m.dataset_module

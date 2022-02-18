@@ -5,7 +5,7 @@ module Calibredb
 
       def initialize(library)
         @library = library
-        @model = library.const_get(:Preferences)
+        @model = library.const_get(:Preference)
       end
     end
   end
