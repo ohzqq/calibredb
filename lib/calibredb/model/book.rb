@@ -1,7 +1,7 @@
 module Calibredb
   module Model
     class Book
-        include Calibredb::Model
+      include Calibredb::Model
 
       def initialize(library)
         @library = library

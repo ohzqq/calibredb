@@ -20,6 +20,7 @@ module Calibredb
     "data" => :Datum,
     "identifiers" => :Identifier,
     "languages" => :Language,
+    "preferences" => :Preference,
     "publishers" => :Publisher,
     "ratings" => :Rating,
     "series" => :Series,
