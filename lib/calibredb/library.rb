@@ -34,6 +34,11 @@ module Calibredb
             self.associations
             CustomColumn.models(database, self)
           end
+          @saved_searches = JSON.parse(self.const_get(:Preference)[3].val)
+        end
+
+        def self.saved_searches
+          @saved_searches
         end
 
         def self.name
