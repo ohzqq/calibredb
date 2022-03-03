@@ -4,15 +4,15 @@ module Calibredb
       include Calibredb::Model
 
       def initialize(library)
-        @library = library
-        @model = library.comments
+        @library = library.models
+        @model = library.models[:comments]
       end
 
       def associations
         @model.many_to_one(
           :book,
           key: :book,
-          class: @library.books
+          class: @library[:books]
         )
       end
 

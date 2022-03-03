@@ -5,8 +5,8 @@ module Calibredb
       include Calibredb::Model::NameColumn
 
       def initialize(library)
-        @library = library
-        @model = library.publishers
+        @library = library.models
+        @model = library.models[:publishers]
       end
 
       def associations
@@ -15,7 +15,7 @@ module Calibredb
           left_key: :publisher, 
           right_key: :book, 
           join_table: :books_publishers_link,
-          class: @library.books
+          class: @library[:books]
         )
       end
     end

@@ -5,8 +5,8 @@ module Calibredb
       include Calibredb::Model
 
       def initialize(library)
-        @library = library
-        @model = library.languages
+        @library = library.models
+        @model = library.models[:languages]
       end
 
       def associations
@@ -15,7 +15,7 @@ module Calibredb
           left_key: :lang_code, 
           right_key: :book, 
           join_table: :books_languages_link,
-          class: @library.books
+          class: @library[:books]
         )
       end
 

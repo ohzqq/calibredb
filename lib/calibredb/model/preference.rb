@@ -4,8 +4,8 @@ module Calibredb
       include Calibredb::Model
 
       def initialize(library)
-        @library = library
-        @model = library.preferences
+        @library = library.models
+        @model = library.models[:preferences]
       end
     end
   end

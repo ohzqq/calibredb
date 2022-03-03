@@ -4,23 +4,20 @@ module Calibredb
       include Calibredb::Model
       include Calibredb
 
+      attr_accessor :model
+
       def initialize(library, db, custom_column)
         @library = library
         @db = db
         @label = custom_column.label.to_sym
-        @model_constant = constantize(custom_column.label)
-        @book = @library.const_get(:Book)
+        @book = @library.models[:books]
         @table = :"custom_column_#{custom_column.id}"
         @is_multiple = custom_column.is_multiple
-      end
-
-      def model
-        @library.const_set(@model_constant, Class.new(Sequel::Model))
-        @library.const_get(@model_constant).dataset = @db[@table]
+        @model = Class.new(Sequel::Model)
+        @model.dataset = db[@table]
       end
 
       def associations
-        @model = @library.const_get(@model_constant)
         case @is_multiple
         when true
           many_to_many
@@ -30,8 +27,6 @@ module Calibredb
       end
 
       def dataset_module
-        @model = @library.const_get(@model_constant)
-
         shared_dataset_modules
 
         unless @model.columns.include?(:book)
@@ -46,7 +41,7 @@ module Calibredb
           order :default, :value
 
           def custom_column
-            library.const_get(:CustomColumn)
+            library.db.custom_columns
           end
 
           def row

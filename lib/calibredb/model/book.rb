@@ -4,8 +4,8 @@ module Calibredb
       include Calibredb::Model
 
       def initialize(library)
-        @library = library
-        @model = library.books
+        @library = library.models
+        @model = library.models[:books]
       end
 
       def associations
@@ -34,20 +34,20 @@ module Calibredb
           def ebooks(query, opts, sort)
             data
               .grep(:title, query, opts)
-              .or(tags: library[:tags].grep(:name, query, opts))
-              .or(authors: library[:authors].grep(:name, query, opts))
-              .or(comments: library[:comments].grep(:text, query, opts))
-              .or(series: library[:series].grep(:name, query, opts))
+              .or(tags: library.models[:tags].grep(:name, query, opts))
+              .or(authors: library.models[:authors].grep(:name, query, opts))
+              .or(comments: library.models[:comments].grep(:text, query, opts))
+              .or(series: library.models[:series].grep(:name, query, opts))
           end
 
           def audiobooks(query, opts, sort)
             data
               .grep(:title, query, opts)
-              .or(tags: library[:tags].grep(:name, query, opts))
-              .or(authors: library[:authors].grep(:name, query, opts))
-              .or(comments: library[:comments].grep(:text, query, opts))
-              .or(series: library[:series].grep(:name, query, opts))
-              .or(narrators: library[:narrators].grep(:value, query, opts))
+              .or(tags: library.models[:tags].grep(:name, query, opts))
+              .or(authors: library.models[:authors].grep(:name, query, opts))
+              .or(comments: library.models[:comments].grep(:text, query, opts))
+              .or(series: library.models[:series].grep(:name, query, opts))
+              .or(narrators: library.models[:narrators].grep(:value, query, opts))
           end
         end
         shared_dataset_modules
@@ -69,7 +69,7 @@ module Calibredb
           left_key: :book,
           right_key: :series,
           join_table: :books_series_link,
-          class: @library.series,
+          class: @library[:series],
           order: :sort
         )
 
@@ -78,7 +78,7 @@ module Calibredb
           left_key: :book,
           right_key: :lang_code,
           join_table: :books_languages_link,
-          class: @library.languages
+          class: @library[:languages]
         )
       end
 
@@ -86,19 +86,19 @@ module Calibredb
         @model.one_to_many(
           :data,
           key: :book,
-          class: @library.data
+          class: @library[:data]
         )
 
         @model.one_to_many(
           :comments,
           key: :book,
-          class: @library.comments
+          class: @library[:comments]
         )
 
         @model.one_to_many(
           :identifiers,
           key: :book,
-          class: @library.identifiers
+          class: @library[:identifiers]
         )
 
       end

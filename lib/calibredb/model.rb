@@ -22,7 +22,9 @@ module Calibredb
         end
 
         def library
-          @model
+          Calibredb.libraries.select do |l|
+            l.db.values.include?(self.model)
+          end.first
         end
       end
     end

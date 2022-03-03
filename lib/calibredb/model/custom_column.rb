@@ -5,8 +5,8 @@ module Calibredb
       include Calibredb::Model
 
       def initialize(library)
-        @library = library
-        @model = library.custom_columns
+        @library = library.models
+        @model = library.models[:custom_columns]
       end
 
       def dataset_module

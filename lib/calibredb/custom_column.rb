@@ -7,17 +7,11 @@ module Calibredb
     extend self
 
     def models(db, library)
-      library.const_get(:CustomColumn).each do |custom_column|
-        model = constantize(custom_column.label)
-
-        library.send(:remove_const, model) if library.const_defined?(model)
-
-        add_to_models(library, {custom_column.label => model})
-
+      library.models[:custom_columns].each do |custom_column|
         col = Model.new(library, db, custom_column)
-        col.model
         col.associations
         col.dataset_module
+        add_to_models(library, {custom_column.label => col.model})
       end
     end
 

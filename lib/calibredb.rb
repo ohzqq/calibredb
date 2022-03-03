@@ -32,7 +32,8 @@ module Calibredb
   def configure(libraries: nil, config: nil)
     libraries ||= read_config(config)
 
-    @libraries = {}
+    libs = Struct.new(*libraries.keys.map(&:to_sym))
+    @libraries = libs.new
     libraries.each do |name, meta|
       const = constantize(name)
       #Library.configure(name, const, meta.transform_keys(&:to_s))

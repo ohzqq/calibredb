@@ -5,15 +5,15 @@ module Calibredb
       include Calibredb::Model
 
       def initialize(library)
-        @library = library
-        @model = library.data
+        @library = library.models
+        @model = library.models[:data]
       end
 
       def associations
         @model.many_to_one(
           :book,
           key: :book,
-          class: @library.books
+          class: @library[:books]
         )
       end
 
