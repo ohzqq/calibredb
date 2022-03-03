@@ -7,8 +7,7 @@ module Calibredb
       @path = meta.fetch("path")
       @audiobooks = meta.fetch("audiobooks")
       @custom_columns = {}
-      @models = MODELS.transform_keys(&:to_sym)
-      #@db = ModelStruct.new
+      @models = MODELS.dup
     end
 
     def connect
@@ -17,29 +16,41 @@ module Calibredb
         associations
         CustomColumn.models(db, self)
       end
-      @saved_searches = JSON.parse(@models[:preferences][3].val)
-      @db = model_struct.new(@models)
-    end
-
-    def model_struct
-      Struct.new(*@models.keys, keyword_init: true)
+      saved_searches
+      model_struct
+      custom_struct
+      @models = @models.keys
     end
 
     def from(table)
       @db[table]
     end
 
+    def saved_searches
+      @saved_searches = JSON.parse(@models[:preferences][3].val)
+    end
+
+    def model_struct
+      m = Struct.new(*@models.keys, keyword_init: true)
+      @db = m.new(@models)
+    end
+
+    def custom_struct
+      m = Struct.new(*@custom_columns.keys, keyword_init: true)
+      @custom_columns = m.new(@custom_columns)
+    end
+
     private
 
     def db_models(database)
-      MODELS.transform_keys(&:to_sym).each do |table, model|
+      MODELS.each do |table, model|
         @models[table] = Class.new(Sequel::Model)
-        @models[table].dataset = database[table.to_sym]
+        @models[table].dataset = database[:"#{table}"]
       end
     end
 
     def associations
-      MODELS.transform_keys(&:to_sym).each do |table, model|
+      MODELS.each do |table, model|
         next if table == :preferences
         m = Calibredb::Model.const_get(model).new(self)
         m.associations unless table == :custom_columns

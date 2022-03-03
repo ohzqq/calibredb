@@ -11,7 +11,7 @@ module Calibredb
         col = Model.new(library, db, custom_column)
         col.associations
         col.dataset_module
-        add_to_models(library, {custom_column.label => col.model})
+        add_to_models(library, {custom_column.label.to_sym => col.model})
       end
     end
 

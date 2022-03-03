@@ -13,18 +13,18 @@ module Calibredb
   extend self
 
   MODELS = {
-    "authors" => :Author,
-    "books" => :Book,
-    "comments" => :Comment,
-    "custom_columns" => :CustomColumn,
-    "data" => :Datum,
-    "identifiers" => :Identifier,
-    "languages" => :Language,
-    "preferences" => :Preference,
-    "publishers" => :Publisher,
-    "ratings" => :Rating,
-    "series" => :Series,
-    "tags" => :Tag
+    authors: :Author,
+    books: :Book,
+    comments: :Comment,
+    custom_columns: :CustomColumn,
+    data: :Datum,
+    identifiers: :Identifier,
+    languages: :Language,
+    preferences: :Preference,
+    publishers: :Publisher,
+    ratings: :Rating,
+    series: :Series,
+    tags: :Tag
   }
 
   ModelStruct = Struct.new(:authors, :books, :comments, :custom_columns, :data, :identifiers, :languages, :preferences, :publishers, :ratings, :series, :tags, :library)
