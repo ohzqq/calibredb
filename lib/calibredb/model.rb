@@ -22,7 +22,7 @@ module Calibredb
         end
 
         def library
-          Calibredb.const_get(default.model.to_s.split("::")[1])
+          @model
         end
       end
     end

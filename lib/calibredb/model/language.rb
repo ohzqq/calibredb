@@ -6,7 +6,7 @@ module Calibredb
 
       def initialize(library)
         @library = library
-        @model = library.const_get(:Language)
+        @model = library.languages
       end
 
       def associations
@@ -15,7 +15,7 @@ module Calibredb
           left_key: :lang_code, 
           right_key: :book, 
           join_table: :books_languages_link,
-          class: @library.const_get(:Book)
+          class: @library.books
         )
       end
 

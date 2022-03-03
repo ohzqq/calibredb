@@ -6,7 +6,7 @@ module Calibredb
 
       def initialize(library)
         @library = library
-        @model = library.const_get(:CustomColumn)
+        @model = library.custom_columns
       end
 
       def dataset_module

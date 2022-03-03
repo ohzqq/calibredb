@@ -6,14 +6,14 @@ module Calibredb
 
       def initialize(library)
         @library = library
-        @model = library.const_get(:Datum)
+        @model = library.data
       end
 
       def associations
         @model.many_to_one(
           :book,
           key: :book,
-          class: @library.const_get(:Book)
+          class: @library.books
         )
       end
 

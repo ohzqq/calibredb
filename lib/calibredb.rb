@@ -27,14 +27,19 @@ module Calibredb
     "tags" => :Tag
   }
 
+  ModelStruct = Struct.new(:authors, :books, :comments, :custom_columns, :data, :identifiers, :languages, :preferences, :publishers, :ratings, :series, :tags, :library)
+
   def configure(libraries: nil, config: nil)
     libraries ||= read_config(config)
 
     @libraries = {}
     libraries.each do |name, meta|
       const = constantize(name)
-      Library.configure(name, const, meta.transform_keys(&:to_s))
-      @libraries[name] = self.const_get(const)
+      #Library.configure(name, const, meta.transform_keys(&:to_s))
+      
+      lib = Library.new(name, meta.transform_keys(&:to_s))
+      lib.connect
+      @libraries[name] = lib
     end
   end
 

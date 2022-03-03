@@ -5,7 +5,7 @@ module Calibredb
 
       def initialize(library)
         @library = library
-        @model = library.const_get(:Book)
+        @model = library.books
       end
 
       def associations
@@ -34,20 +34,20 @@ module Calibredb
           def ebooks(query, opts, sort)
             data
               .grep(:title, query, opts)
-              .or(tags: library.const_get(:Tag).grep(:name, query, opts))
-              .or(authors: library.const_get(:Author).grep(:name, query, opts))
-              .or(comments: library.const_get(:Comment).grep(:text, query, opts))
-              .or(series: library.const_get(:Series).grep(:name, query, opts))
+              .or(tags: library[:tags].grep(:name, query, opts))
+              .or(authors: library[:authors].grep(:name, query, opts))
+              .or(comments: library[:comments].grep(:text, query, opts))
+              .or(series: library[:series].grep(:name, query, opts))
           end
 
           def audiobooks(query, opts, sort)
             data
               .grep(:title, query, opts)
-              .or(tags: library.const_get(:Tag).grep(:name, query, opts))
-              .or(authors: library.const_get(:Author).grep(:name, query, opts))
-              .or(comments: library.const_get(:Comment).grep(:text, query, opts))
-              .or(series: library.const_get(:Series).grep(:name, query, opts))
-              .or(narrators: library.const_get(:Narrators).grep(:value, query, opts))
+              .or(tags: library[:tags].grep(:name, query, opts))
+              .or(authors: library[:authors].grep(:name, query, opts))
+              .or(comments: library[:comments].grep(:text, query, opts))
+              .or(series: library[:series].grep(:name, query, opts))
+              .or(narrators: library[:narrators].grep(:value, query, opts))
           end
         end
         shared_dataset_modules
@@ -60,7 +60,7 @@ module Calibredb
             join_table: :"books_#{association}s_link",
             left_key: :book,
             right_key: association.to_sym,
-            class: @library.const_get(association.capitalize.to_sym)
+            class: @library[:"#{association}s"]
           )
         end
 
@@ -69,7 +69,7 @@ module Calibredb
           left_key: :book,
           right_key: :series,
           join_table: :books_series_link,
-          class: @library.const_get(:Series),
+          class: @library.series,
           order: :sort
         )
 
@@ -78,7 +78,7 @@ module Calibredb
           left_key: :book,
           right_key: :lang_code,
           join_table: :books_languages_link,
-          class: @library.const_get(:Language)
+          class: @library.languages
         )
       end
 
@@ -86,19 +86,19 @@ module Calibredb
         @model.one_to_many(
           :data,
           key: :book,
-          class: @library.const_get(:Datum)
+          class: @library.data
         )
 
         @model.one_to_many(
           :comments,
           key: :book,
-          class: @library.const_get(:Comment)
+          class: @library.comments
         )
 
         @model.one_to_many(
           :identifiers,
           key: :book,
-          class: @library.const_get(:Identifier)
+          class: @library.identifiers
         )
 
       end

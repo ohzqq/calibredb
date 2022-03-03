@@ -1,105 +1,44 @@
 module Calibredb
-  module Library
-    extend self
+  class Library
+    attr_accessor :name, :path, :audiobooks, :custom_columns, :db, :saved_searches
 
-    def configure(name, const, meta)
-      lib = Calibredb.const_set(const, library)
-      lib.name = name
-      lib.path = meta["path"]
-      lib.audiobooks = meta["audiobooks"]
-      lib.custom_columns = {}
-      lib.models = MODELS
+    def initialize(name, meta)
+      @name = name
+      @path = meta.fetch("path")
+      @audiobooks = meta.fetch("audiobooks")
+      @custom_columns = {}
+      @db = ModelStruct.new
+      @db.library = name
     end
 
-    def library
-      Module.new do
-        def self.[](table)
-          self.const_get(@models[table.to_s])
-        end
+    def connect
+      Sequel.sqlite(File.join(@path, "metadata.db"), readonly: true) do |db| 
+        db_models(db)
+        associations
+        #CustomColumn.models(db, self)
+      end
+      @saved_searches = JSON.parse(@db.preferences[3].val)
+    end
 
-        def self.from(table)
-          self.const_get(@models[table.to_s])
-        end
+    def from(table)
+      @db[table]
+    end
 
-        def self.connect
-          Sequel.connect(
-            {
-              adapter: "sqlite",
-              database: File.join(@path, "metadata.db"),
-              readonly: true
-            }
-          ) do |database| 
+    private
 
-            self.db_models(database)
-            self.associations
-            CustomColumn.models(database, self)
-          end
-          @saved_searches = JSON.parse(self.const_get(:Preference)[3].val)
-        end
+    def db_models(database)
+      MODELS.each do |table, model|
+        @db[table] = Class.new(Sequel::Model)
+        @db[table].dataset = database[table.to_sym]
+      end
+    end
 
-        def self.saved_searches
-          @saved_searches
-        end
-
-        def self.name
-          @name
-        end
-
-        def self.name=(name)
-          @name = name
-        end
-
-        def self.path
-          @path
-        end
-
-        def self.path=(path)
-          @path = path
-        end
-
-        def self.audiobooks
-          @audiobooks
-        end
-
-        def self.audiobooks=(audiobooks)
-          @audiobooks = audiobooks
-        end
-
-        def self.custom_columns
-          @custom_columns
-        end
-
-        def self.custom_columns=(custom_columns)
-          @custom_columns = custom_columns
-        end
-
-        def self.models
-          @models
-        end
-
-        def self.models=(models)
-          @models = models
-        end
-
-        private
-
-        def self.db_models(database)
-          MODELS.each do |table, model|
-            self.send(:remove_const, model) if self.const_defined?(model)
-
-            self.const_set(model, Class.new(Sequel::Model))
-            self.const_get(model).dataset = database[table.to_sym]
-          end
-        end
-
-        def self.associations
-          MODELS.each do |table, model|
-            next if table == "preferences"
-            m = Calibredb::Model.const_get(model).new(self)
-            m.associations unless table == "custom_columns"
-            m.dataset_module
-          end
-        end
+    def associations
+      MODELS.each do |table, model|
+        next if table == "preferences"
+        m = Calibredb::Model.const_get(model).new(@db)
+        m.associations unless table == "custom_columns"
+        m.dataset_module
       end
     end
   end

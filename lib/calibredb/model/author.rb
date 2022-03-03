@@ -5,7 +5,7 @@ module Calibredb
 
       def initialize(library)
         @library = library
-        @model = library.const_get(:Author)
+        @model = library.authors
       end
 
       def associations
@@ -14,7 +14,7 @@ module Calibredb
           left_key: :author, 
           right_key: :book, 
           join_table: :books_authors_link,
-          class: @library.const_get(:Book),
+          class: @library.books,
           order: :sort
         )
       end
