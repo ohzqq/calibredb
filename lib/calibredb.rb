@@ -41,7 +41,7 @@ module Calibredb
   end
 
   def db(library)
-    self.libraries[library.to_s]
+    self.libraries[library.to_s].db
   end
 
   def connect
