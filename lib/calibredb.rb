@@ -27,17 +27,13 @@ module Calibredb
     tags: :Tag
   }
 
-  ModelStruct = Struct.new(:authors, :books, :comments, :custom_columns, :data, :identifiers, :languages, :preferences, :publishers, :ratings, :series, :tags, :library)
-
   def configure(libraries: nil, config: nil)
     libraries ||= read_config(config)
 
     libs = Struct.new(*libraries.keys.map(&:to_sym))
     @libraries = libs.new
+
     libraries.each do |name, meta|
-      const = constantize(name)
-      #Library.configure(name, const, meta.transform_keys(&:to_s))
-      
       lib = Library.new(name, meta.transform_keys(&:to_s))
       lib.connect
       @libraries[name] = lib
@@ -54,13 +50,5 @@ module Calibredb
 
   def read_config(config)
     YAML.safe_load_file(config)
-  end
-
-  def constantize(name)
-    name.gsub(/[[:punct:]]/, " ")
-      .split
-      .map(&:capitalize)
-      .join
-      .to_sym
   end
 end

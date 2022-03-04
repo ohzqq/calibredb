@@ -6,7 +6,7 @@ module Calibredb
       @name = name
       @path = meta.fetch("path")
       @audiobooks = meta.fetch("audiobooks")
-      @custom_columns = {}
+      @custom_columns = []
       @models = MODELS.dup
     end
 
@@ -18,13 +18,14 @@ module Calibredb
       end
       saved_searches
       model_struct
-      custom_struct
       @models = @models.keys
     end
 
     def from(table)
       @db[table]
     end
+
+    private
 
     def saved_searches
       @saved_searches = JSON.parse(@models[:preferences][3].val)
@@ -34,13 +35,6 @@ module Calibredb
       m = Struct.new(*@models.keys, keyword_init: true)
       @db = m.new(@models)
     end
-
-    def custom_struct
-      m = Struct.new(*@custom_columns.keys, keyword_init: true)
-      @custom_columns = m.new(@custom_columns)
-    end
-
-    private
 
     def db_models(database)
       MODELS.each do |table, model|
