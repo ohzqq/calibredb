@@ -22,7 +22,7 @@ module Calibredb
         end
         
         def as_json(desc = nil, books = true, *associations)
-          as_hash(desc, *associations).to_json
+          as_hash(desc, books, *associations).to_json
         end
 
         def as_hash(desc = nil, books = true, *associations)
