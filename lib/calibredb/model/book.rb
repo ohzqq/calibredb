@@ -34,20 +34,20 @@ module Calibredb
           def ebooks(query, opts, sort)
             data
               .grep(:title, query, opts)
-              .or(tags: library.models[:tags].grep(:name, query, opts))
-              .or(authors: library.models[:authors].grep(:name, query, opts))
-              .or(comments: library.models[:comments].grep(:text, query, opts))
-              .or(series: library.models[:series].grep(:name, query, opts))
+              .or(tags: library.db[:tags].grep(:name, query, opts))
+              .or(authors: library.db[:authors].grep(:name, query, opts))
+              .or(comments: library.db[:comments].grep(:text, query, opts))
+              .or(series: library.db[:series].grep(:name, query, opts))
           end
 
           def audiobooks(query, opts, sort)
             data
               .grep(:title, query, opts)
-              .or(tags: library.models[:tags].grep(:name, query, opts))
-              .or(authors: library.models[:authors].grep(:name, query, opts))
-              .or(comments: library.models[:comments].grep(:text, query, opts))
-              .or(series: library.models[:series].grep(:name, query, opts))
-              .or(narrators: library.models[:narrators].grep(:value, query, opts))
+              .or(tags: library.db[:tags].grep(:name, query, opts))
+              .or(authors: library.db[:authors].grep(:name, query, opts))
+              .or(comments: library.db[:comments].grep(:text, query, opts))
+              .or(series: library.db[:series].grep(:name, query, opts))
+              .or(narrators: library.db[:narrators].grep(:value, query, opts))
           end
         end
         shared_dataset_modules
