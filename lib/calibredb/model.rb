@@ -21,17 +21,17 @@ module Calibredb
           default
         end
         
-        def as_json(desc = nil, books = true, *associations)
-          as_hash(desc, books, *associations).to_json
+        def as_json(desc = nil, *associations)
+          as_hash(desc, *associations).to_json
         end
 
-        def as_hash(desc = nil, books = true, *associations)
+        def as_hash(desc = nil, *associations)
           d = desc ? data.reverse : data
           d.map do |row|
             meta = {}
             meta[:value] = row.value
             meta[:id] = row.id
-            unless books.nil?
+            unless associations.include?(:books)
               if Calibredb.fields.many_books_to_many.to_sym.include?(category) ||
                   Calibredb.fields.one_to_many_books.to_sym.include?(category)
                 meta[:book_ids] = row.books_dataset.map(:id)
