@@ -21,7 +21,7 @@ module Calibredb
           default
         end
         
-        def as_json(desc = nil, books = false, *associations)
+        def as_json(desc = nil, books = true, *associations)
           as_hash(desc, books, *associations).to_json
         end
 
