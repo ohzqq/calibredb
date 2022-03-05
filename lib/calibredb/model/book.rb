@@ -52,7 +52,7 @@ module Calibredb
               meta[:uuid] = row.uuid
               meta[:has_cover] = row.has_cover
               meta[:last_modified] = row.last_modified
-              meta[:url] = "/#{library.name}/books/#{row.id}"
+              #meta[:url] = "/#{library.name}/books/#{row.id}"
               fields.each do |a|
                 dataset = a == :formats ? :data_dataset : :"#{a}_dataset"
                 meta[a] = row.send(dataset).as_hash
