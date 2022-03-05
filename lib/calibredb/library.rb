@@ -7,10 +7,10 @@ module Calibredb
       @path = meta.fetch("path")
       @audiobooks = meta.fetch("audiobooks")
       @custom_columns = []
-      @models = MODELS.dup
     end
 
     def connect
+      @models = MODELS.dup
       Sequel.sqlite(File.join(@path, "metadata.db"), readonly: true) do |db| 
         db_models(db)
         associations

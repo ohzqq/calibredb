@@ -57,7 +57,6 @@ module Calibredb
                 dataset = a == :formats ? :data_dataset : :"#{a}_dataset"
                 meta[a] = row.send(dataset).as_hash
               end
-
               meta
             end
           end

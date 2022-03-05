@@ -55,13 +55,15 @@ module Calibredb
     end
   end
 
+
   class Search
     Calibredb.fields.browsable.to_sym.each do |cmd|
       define_method(cmd) do |args, options|
         options = options.__hash__
-        options[:category] = __method__
         options[:json] = true
-        l, c, d = Calibredb.filter(cmd: :search, args: args, options: options)
+        options[:category] = __method__
+        l, c, d = Calibredb::Filter.new
+          .results(cmd: :search, args: args, options: options)
         puts d
       end
     end
@@ -74,6 +76,7 @@ module Calibredb
         options[:category] = __method__
         options[:json] = true
         l, c, d = Calibredb.filter(cmd: :list, args: args, options: options)
+          #.results(cmd: :list, args: args, options: options)
         puts d
       end
     end
@@ -82,7 +85,8 @@ module Calibredb
       options = options.__hash__
       options[:category] = __method__
       options[:json] = true
-      l, c, d = Calibredb.filter(cmd: :list, args: args, options: options)
+      l, c, d = Calibredb::Filter.new
+        .results(cmd: :list, args: args, options: options)
       puts d
     end
 

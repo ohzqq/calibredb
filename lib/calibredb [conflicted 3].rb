@@ -49,14 +49,12 @@ module Calibredb
   def configatron
     lib.list = Calibredb.libraries.map(&:name)
 
-    lib.update = Calibredb.libraries.first.name
     lib.default = Calibredb.libraries.first.name
 
     lib.current = Configatron::Dynamic.new do
       library = 
         if lib.has_key?(:update)
           lib.default = lib.update
-          self.libraries[lib.update].connect
           lib.update 
         else
           lib.default
