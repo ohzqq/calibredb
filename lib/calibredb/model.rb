@@ -36,7 +36,7 @@ module Calibredb
               meta[:book_ids] = row.books_dataset.map(:id)
               meta[:total_books] = row.books_dataset.count
             end
-            meta[:url] = "/#{library.name}/#{category}/#{row.id}"
+            #meta[:url] = "/#{library.name}/#{category}/#{row.id}"
             meta
           end
         end
