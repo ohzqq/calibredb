@@ -23,7 +23,6 @@ module CalibreAPI
         data = data.by(options.fetch(:sort)) if options.key?(:sort)
         data = data.desc if options.key?(:desc)
 
-        #puts args.inspect
         puts data.meta.as_json(*fields)
       end
     end

@@ -21,6 +21,10 @@ module Calibredb
       @models = @models.keys
     end
 
+    def [](table)
+      @db[table]
+    end
+
     def from(table)
       @db[table]
     end

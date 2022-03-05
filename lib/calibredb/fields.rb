@@ -3,7 +3,7 @@ module Calibredb
     attr_reader :fields
 
     def initialize(library)
-      @book = Calibredb.db(library).books
+      @book = lib[library].db.books
       @library = library
       @all_fields = []
     end

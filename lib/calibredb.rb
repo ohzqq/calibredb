@@ -71,10 +71,6 @@ module Calibredb
     Calibredb::Fields.new(library)
   end
   
-  def db(library)
-    self.libraries[library.to_s].db
-  end
-
   def connect
     @libraries.each_key { |library| @libraries[library].connect }
   end
