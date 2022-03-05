@@ -1,0 +1,82 @@
+#!/usr/bin/env ruby
+
+require "calibre_api"
+require 'commander'
+
+module Calibredb
+  class CLI
+    include Commander::Methods
+    
+    def run
+      program :name, "cdb"
+      program :version, CalibreAPI::VERSION
+      program :description, "CLI tool for getting data from a Calibre library."
+      
+      global_option("-l", "--library NAME", "library name") {|n| lib.update = n}
+      global_option("-a", "--authors")
+      global_option("-n", "--narrators")
+      global_option("-t", "--tags")
+      global_option("-p", "--publishers")
+      global_option("-i", "--identifiers")
+      global_option("-f", "--formats")
+      global_option("-r", "--ratings")
+      global_option("-d", "--date ADDED|MODIFIED|PUBDATE")
+      global_option("-s", "--series")
+      global_option("-I", "--ids LIST")
+      global_option("-F", "--fields LIST", "Comma separated list of fields.")
+      global_option("-S", "--sort SMTH")
+      global_option("-D", "--desc")
+      global_option("--ids")
+
+      command :"list libraries" do |c|
+        c.syntax = "cdb list libraries"
+        c.action List, :libraries
+      end
+      alias_command :"ls libraries", :"list libraries"
+
+      CalibreAPI.fields.browsable.to_s.each do |cmd|
+        command :"list #{cmd}" do |c|
+          c.syntax = "cdb list #{cmd}"
+          c.action List, :"#{cmd}"
+        end
+        alias_command :"ls #{cmd}", :"list #{cmd}"
+
+        command :"search #{cmd}" do |c|
+          c.syntax = "cdb search #{cmd}"
+          c.action Search, :"#{cmd}"
+        end
+        alias_command :"q #{cmd}", :"search #{cmd}"
+      end
+
+      always_trace!
+      run!
+    end
+  end
+
+
+  class Search
+    CalibreAPI.fields.browsable.to_sym.each do |cmd|
+      define_method(cmd) do |args, options|
+        data(:search, __method__, args, options)
+      end
+    end
+  end
+
+  class List
+    CalibreAPI.fields.browsable.to_sym.each do |cmd|
+      define_method(cmd) do |args, options|
+        data(:list, __method__, args, options.__hash__)
+      end
+    end
+
+    def date(args, options)
+      data(:list, __method__, args, options)
+    end
+
+    def libraries(args, options)
+      libs = {libraries: lib.list}
+      puts libs.to_json
+    end
+  end
+end
+MyApplication.new.run if $0 == __FILE__
