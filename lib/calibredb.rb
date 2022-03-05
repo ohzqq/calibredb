@@ -47,10 +47,6 @@ module Calibredb
   end
 
   def configatron
-    Calibredb.libraries.each do |l|
-      lib[l.name] = l
-    end
-    
     lib.list = Calibredb.libraries.map(&:name)
 
     lib.default = Calibredb.libraries.first.name
@@ -63,8 +59,16 @@ module Calibredb
         else
           lib.default
         end
-      lib[library]
+      self.libraries[library]
     end
+  end
+
+  def filter(cmd: nil, args: nil, options: {})
+    Calibredb::Filter.new.results(cmd: cmd, args: args, options: options)
+  end
+
+  def db(library)
+    self.libraries[library.to_s].db
   end
 
   def fields(library = lib.current.name)
