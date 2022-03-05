@@ -21,11 +21,11 @@ module Calibredb
           default
         end
         
-        def as_json(desc = nil, books = true, *associations)
+        def as_json(desc = nil, books = nil, *associations)
           as_hash(desc, books, *associations).to_json
         end
 
-        def as_hash(desc = nil, books = true, *associations)
+        def as_hash(desc = nil, books = nil, *associations)
           d = desc ? data.reverse : data
           d.map do |row|
             meta = {}
