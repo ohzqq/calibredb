@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 
-require "calibre_api"
+require "calibredb"
 require 'commander'
+
+Calibredb.configure(config: '/home/nina/Sync/code/calibredb/tmp/config.yml')
 
 module Calibredb
   class CLI
@@ -9,7 +11,7 @@ module Calibredb
     
     def run
       program :name, "cdb"
-      program :version, CalibreAPI::VERSION
+      program :version, Calibredb::VERSION
       program :description, "CLI tool for getting data from a Calibre library."
       
       global_option("-l", "--library NAME", "library name") {|n| lib.update = n}
@@ -34,7 +36,7 @@ module Calibredb
       end
       alias_command :"ls libraries", :"list libraries"
 
-      CalibreAPI.fields.browsable.to_s.each do |cmd|
+      Calibredb.fields.browsable.to_s.each do |cmd|
         command :"list #{cmd}" do |c|
           c.syntax = "cdb list #{cmd}"
           c.action List, :"#{cmd}"
@@ -55,22 +57,37 @@ module Calibredb
 
 
   class Search
-    CalibreAPI.fields.browsable.to_sym.each do |cmd|
+    Calibredb.fields.browsable.to_sym.each do |cmd|
       define_method(cmd) do |args, options|
-        data(:search, __method__, args, options)
+        options = options.__hash__
+        options[:json] = true
+        options[:category] = __method__
+        l, c, d = Calibredb::Filter.new
+          .results(cmd: :search, args: args, options: options)
+        puts d
       end
     end
   end
 
   class List
-    CalibreAPI.fields.browsable.to_sym.each do |cmd|
+    Calibredb.fields.browsable.to_sym.each do |cmd|
       define_method(cmd) do |args, options|
-        data(:list, __method__, args, options.__hash__)
+        options = options.__hash__
+        options[:category] = __method__
+        options[:json] = true
+        l, c, d = Calibredb::Filter.new
+          .results(cmd: :list, args: args, options: options)
+        puts d
       end
     end
 
     def date(args, options)
-      data(:list, __method__, args, options)
+      options = options.__hash__
+      options[:category] = __method__
+      options[:json] = true
+      l, c, d = Calibredb::Filter.new
+        .results(cmd: :list, args: args, options: options)
+      puts d
     end
 
     def libraries(args, options)
@@ -79,4 +96,5 @@ module Calibredb
     end
   end
 end
-MyApplication.new.run if $0 == __FILE__
+
+Calibredb::CLI.new.run if $0 == __FILE__

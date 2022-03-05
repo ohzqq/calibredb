@@ -1,12 +1,17 @@
 # frozen_string_literal: true
+#
 Bundler.require(:default)
 
 require_relative "calibredb/version"
 
+alias lib configatron
+
 module Calibredb
-  autoload :Model, 'calibredb/model'
-  autoload :Library, 'calibredb/library'
   autoload :CustomColumn, 'calibredb/custom_column'
+  autoload :Fields, 'calibredb/fields'
+  autoload :Filter, 'calibredb/filter'
+  autoload :Library, 'calibredb/library'
+  autoload :Model, 'calibredb/model'
 
   attr_accessor :libraries
 
@@ -34,12 +39,38 @@ module Calibredb
     @libraries = libs.new
 
     libraries.each do |name, meta|
-      lib = Library.new(name, meta.transform_keys(&:to_s))
-      lib.connect
-      @libraries[name] = lib
+      library = Library.new(name, meta.transform_keys(&:to_s))
+      library.connect
+      @libraries[name] = library
+    end
+    configatron
+  end
+
+  def configatron
+    Calibredb.libraries.each do |l|
+      lib[l.name] = l
+    end
+    
+    lib.list = Calibredb.libraries.map(&:name)
+
+    lib.default = Calibredb.libraries.first.name
+
+    lib.current = Configatron::Dynamic.new do
+      library = 
+        if lib.has_key?(:update)
+          lib.default = lib.update
+          lib.update 
+        else
+          lib.default
+        end
+      lib[library]
     end
   end
 
+  def fields(library = lib.current.name)
+    Calibredb::Fields.new(library)
+  end
+  
   def db(library)
     self.libraries[library.to_s].db
   end

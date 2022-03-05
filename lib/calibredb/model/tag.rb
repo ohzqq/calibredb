@@ -19,6 +19,15 @@ module Calibredb
           order: :sort
         )
       end
+
+      def dataset_module
+        name_dataset_module
+        @model.dataset_module do
+          def category
+            :tags
+          end
+        end
+      end
     end
   end
 end

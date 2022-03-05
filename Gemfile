@@ -18,3 +18,7 @@ gem "sqlite3", "~> 1.4"
 gem "sequel", "~> 5.52"
 
 gem "rabl", "~> 0.15.0"
+
+gem "configatron", "~> 4.5"
+
+gem "commander", "~> 4.6"

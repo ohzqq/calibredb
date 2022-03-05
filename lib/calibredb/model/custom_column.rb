@@ -13,6 +13,10 @@ module Calibredb
         @model.dataset_module do
           select :default
 
+          def category
+            :custom_columns
+          end
+
           def list
             as_hash(:label, :id)
           end

@@ -20,6 +20,26 @@ module Calibredb
         def data
           default
         end
+        
+        def as_json(desc = nil, *associations)
+          as_hash(desc, *associations).to_json
+        end
+
+        def as_hash(desc = nil, *associations)
+          d = desc ? data.reverse : data
+          d.map do |row|
+            meta = {}
+            meta[:value] = row.value
+            meta[:id] = row.id
+            if Calibredb.fields.many_books_to_many.to_sym.include?(category) ||
+                Calibredb.fields.one_to_many_books.to_sym.include?(category)
+              meta[:book_ids] = row.books_dataset.map(:id)
+              meta[:total_books] = row.books_dataset.count
+            end
+            meta[:url] = "/#{library.name}/#{category}/#{row.id}"
+            meta
+          end
+        end
 
         def library
           Calibredb.libraries.select do |l|

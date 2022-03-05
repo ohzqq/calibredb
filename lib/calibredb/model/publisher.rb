@@ -18,6 +18,15 @@ module Calibredb
           class: @library[:books]
         )
       end
+
+      def dataset_module
+        name_dataset_module
+        @model.dataset_module do
+          def category
+            :publishers
+          end
+        end
+      end
     end
   end
 end

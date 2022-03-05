@@ -1,8 +1,9 @@
-module CalibreAPI
-  class DB
+module Calibredb
+  class Filter
     attr_reader :db
 
     def initialize(table = :books, library = lib.current.name)
+      @options = {}
       @library = library
       @table = table.to_s
       @db = lib.current.db[@table]
@@ -49,17 +50,6 @@ module CalibreAPI
       self
     end
 
-    def results
-      self.from(@library) if @library
-      self.in(@table) if @table
-      self.find(@ids) if @ids
-      self.by(@sort) && @sort = nil if @sort
-      self.query(@query) if @query
-      self.letter(@alpha) if @alpha
-      self.desc && @order = false if @order
-      self
-    end
-
     def query(q)
       @updated = true
       @query = q
@@ -70,8 +60,8 @@ module CalibreAPI
     
     def desc
       @updated = true
-      @order = true
-      self.data = @data.reverse
+      @desc = :desc
+      self.data = data.reverse
       self
     end
 
@@ -91,10 +81,49 @@ module CalibreAPI
         .include?(@sort) ? @data.send(@sort.to_sym) : @data
     end
 
-    def meta
-      results if @updated
+    def filter
+      self.from(@library) if @library
+      self.in(@table) if @table
+      self.query(@query) if @query
+      self.find(@ids) if @ids
+      self.by(@sort) && @sort = nil if @sort
+      self.letter(@alpha) if @alpha
+      self.desc if @desc
+      self
+    end
+
+    def results(cmd: nil, args: nil, options: {})
+      @updated = true
+      @options = options
+      @library = options.fetch(:library) if options.key?(:library)
+      @table = options.fetch(:category) if options.key?(:category)
+      @fields = options.fetch(:fields).split(",") if options.key?(:fields)
+      @sort = options.fetch(:sort) if options.key?(:sort)
+      @desc = :desc if options.key?(:desc)
+
+      @ids =
+        if cmd == :list
+          args.first if args
+        elsif options.key?(:ids)
+          options.fetch(:ids)
+        end
+
+      @query =
+        if cmd == :search
+          args.join(" ") if args
+        elsif options.key?(:q)
+          options.fetch(:q)
+        end
+
+      filtered = @options.key?(:json) ? update.as_json(@desc, *@fields) : update
+
+      return @library, @table, filtered
+    end
+
+    def update
+      filter if @updated
       @updated = false
-      books? ? Book.new(@data, @library) : Association.new(@table, @data, @library)
+      @data
     end
   end
 end

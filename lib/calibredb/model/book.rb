@@ -19,7 +19,53 @@ module Calibredb
           order :modified, :last_modified
           order :pubdate, :pubdate
           order :added, :timestamp
-        
+      
+          def data
+            default
+          end
+
+          def library
+            Calibredb.libraries.select do |l|
+              l.db.values.include?(self.model)
+            end.first
+          end
+
+          def as_json(desc = nil, *associations)
+            as_hash(desc, *associations).to_json
+          end
+
+          def as_hash(desc = nil, *associations)
+            fields = [:authors] + associations
+            d = desc ? data.reverse : data
+            d.map do |row|
+              meta = {}
+              meta[:id] = row.id
+              meta[:title] = row.title
+              meta[:sort] = row.sort
+              meta[:timestamp] = row.timestamp
+              meta[:pubdate] = row.pubdate
+              meta[:series_index] = row.series_index if fields.include?(:series)
+              meta[:author_sort] = row.author_sort
+              meta[:isbn] = row.isbn
+              meta[:lccn] = row.lccn
+              meta[:path] = row.path
+              meta[:uuid] = row.uuid
+              meta[:has_cover] = row.has_cover
+              meta[:last_modified] = row.last_modified
+              meta[:url] = "/#{library.name}/books/#{row.id}"
+              fields.each do |a|
+                dataset = a == :formats ? :data_dataset : :"#{a}_dataset"
+                meta[a] = row.send(dataset).as_hash
+              end
+
+              meta
+            end
+          end
+
+          def category
+            :books
+          end
+
           def query(query, sort = :default)
             opts = {all_patterns: true, case_insensitive: true}
             query = query.split(" ").map {|q| "%#{q}%"}
@@ -50,7 +96,6 @@ module Calibredb
               .or(narrators: library.db[:narrators].grep(:value, query, opts))
           end
         end
-        shared_dataset_modules
       end
 
       def many_to_many

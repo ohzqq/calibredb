@@ -24,6 +24,10 @@ module Calibredb
 
         @model.dataset_module do
           order :default, :lang_code
+
+          def category
+            :languages
+          end
         end
         shared_dataset_modules
       end

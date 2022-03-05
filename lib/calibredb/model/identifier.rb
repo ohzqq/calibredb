@@ -21,6 +21,10 @@ module Calibredb
         @model.def_column_alias(:value, :val)
         @model.dataset_module do
           order :default, :val
+
+          def category
+            :identifiers
+          end
         end
         shared_dataset_modules
       end

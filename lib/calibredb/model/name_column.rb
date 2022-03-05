@@ -3,7 +3,7 @@ module Calibredb
     module NameColumn
       include Calibredb::Model
 
-      def dataset_module
+      def name_dataset_module
         @model.def_column_alias(:value, :name)
         @model.dataset_module do
           order :default, :name

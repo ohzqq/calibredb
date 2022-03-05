@@ -23,6 +23,10 @@ module Calibredb
         @model.def_column_alias(:value, :rating)
         @model.dataset_module do
           order :default, :rating
+
+          def category
+            :ratings
+          end
         end
       end
     end

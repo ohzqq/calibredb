@@ -1,4 +1,4 @@
-module CalibreAPI
+module Calibredb
   class Fields
     attr_reader :fields
 
