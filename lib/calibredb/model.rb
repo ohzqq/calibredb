@@ -31,7 +31,7 @@ module Calibredb
             meta = {}
             meta[:value] = row.value
             meta[:id] = row.id
-            if fields.map(&:to_sym).include?(:books)
+            if fields.include?("books")
               if Calibredb.fields.many_books_to_many.to_sym.include?(category) ||
                   Calibredb.fields.one_to_many_books.to_sym.include?(category)
                 meta[:book_ids] = row.books_dataset.map(:id)
@@ -45,7 +45,7 @@ module Calibredb
 
         def library
           Calibredb.libraries.select do |l|
-            l.db.values.include?(self.model)
+            l.db.values.map(&:object_id).include?(self.model.object_id)
           end.first
         end
       end

@@ -95,30 +95,30 @@ module Calibredb
     def results(cmd: nil, args: nil, options: {})
       @updated = true
       @options = options
-      @library = options.fetch(:library) if options.key?(:library)
-      @table = options.fetch(:category) if options.key?(:category)
-      @fields = options.fetch(:fields).split(",").map(&:to_sym) if options.key?(:fields)
-      @sort = options.fetch(:sort) if options.key?(:sort)
-      @desc = :desc if options.key?(:desc)
+      @library = options.fetch("library").to_sym if options.key?("library")
+      @table = options.fetch("category").to_sym if options.key?("category")
+      @fields = options.fetch("fields").split(",") if options.key?("fields")
+      @sort = options.fetch("sort").to_sym if options.key?("sort")
+      @desc = :desc if options.key?("desc")
 
       @ids =
         if cmd == :list
           args.first if args
-        elsif options.key?(:ids)
-          options.fetch(:ids)
+        elsif options.key?("ids")
+          options.fetch("ids").to_sym
         end
 
       @query =
         if cmd == :search
           args.join(" ") if args
-        elsif options.key?(:q)
-          options.fetch(:q)
+        elsif options.key?("q")
+          options.fetch("q")
         end
 
       filtered =
-        if @options.key?(:json)
+        if @options.key?("json")
           update.as_json(@desc, *@fields)
-        elsif @options.key?(:hash)
+        elsif @options.key?("hash")
           update.as_hash(@desc, *@fields)
         else
           update

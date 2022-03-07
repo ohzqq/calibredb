@@ -40,6 +40,10 @@ module Calibredb
         @model.dataset_module do
           order :default, :value
 
+          def library
+            Calibredb.libraries[lib.current.name]
+          end
+
           def custom_column
             library.db.custom_columns
           end
