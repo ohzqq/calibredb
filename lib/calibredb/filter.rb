@@ -116,10 +116,12 @@ module Calibredb
         end
 
       filtered =
-        if @options.key?("json")
-          update.as_json(@desc, *@fields)
-        elsif @options.key?("hash")
-          update.as_hash(@desc, *@fields)
+        if @options.key?("format")
+          case @options.fetch("format")
+          when "json"
+            update.as_json(@desc, *@fields)
+          when "hash"
+            update.as_hash(@desc, *@fields)
         else
           update
         end
