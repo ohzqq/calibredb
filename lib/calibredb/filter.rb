@@ -105,7 +105,7 @@ module Calibredb
         if cmd == :list
           args.first if args
         elsif options.key?("ids")
-          options.fetch("ids").to_sym
+          options.fetch("ids").split(",")
         end
 
       @query =
