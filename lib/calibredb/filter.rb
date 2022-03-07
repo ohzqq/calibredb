@@ -115,7 +115,14 @@ module Calibredb
           options.fetch(:q)
         end
 
-      filtered = @options.key?(:json) ? update.as_json(@desc, *@fields) : update
+      filtered =
+        if @options.key?(:json)
+          update.as_json(@desc, *@fields)
+        elsif @options.key?(:hash)
+          update.as_hash(@desc, *@fields)
+        else
+          update
+        end
 
       return @library, @table, filtered
     end
