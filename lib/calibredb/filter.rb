@@ -97,7 +97,7 @@ module Calibredb
       @options = options
       @library = options.fetch(:library) if options.key?(:library)
       @table = options.fetch(:category) if options.key?(:category)
-      @fields = options.fetch(:fields).split(",") if options.key?(:fields)
+      @fields = options.fetch(:fields).split(",").map(&:to_sym) if options.key?(:fields)
       @sort = options.fetch(:sort) if options.key?(:sort)
       @desc = :desc if options.key?(:desc)
 
