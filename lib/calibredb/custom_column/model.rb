@@ -72,6 +72,10 @@ module Calibredb
             row.editable
           end
 
+          def category
+            :"#{row.label}"
+          end
+
           def datatype
             row.datatype
           end
