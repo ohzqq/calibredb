@@ -122,6 +122,7 @@ module Calibredb
             update.as_json(@desc, *@fields)
           when "hash"
             update.as_hash(@desc, *@fields)
+          end
         else
           update
         end
