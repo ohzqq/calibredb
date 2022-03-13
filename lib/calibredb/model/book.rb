@@ -31,9 +31,18 @@ module Calibredb
           end
           
           def join(field)
-            d.map do |row|
-              if %i[title series series_index].include?(field)
-                "#{@title.get} [#{@series.get}, Book #{@series_index.get}]"
+            data.map do |row|
+              if Calibredb.fields.title_and_series.to_sym.include?(field)
+                if row.series_dataset.count == 0
+                  row.title
+                else
+                  "#{row.title} [#{row.series.first.value}, Book #{row.series_index}]"
+                end
+              elsif Calibredb.fields.collections.to_sym.include?(field)
+                field = field == :formats ? :data : field
+                row.send(field).map(&:value).join(", ")
+              elsif Calibredb.fields.names.to_sym.include?(field)
+                row.send(field).map(&:value).join(" & ")
               end
             end
           end
