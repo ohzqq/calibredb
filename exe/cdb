@@ -3,7 +3,7 @@
 require "calibredb"
 require 'commander'
 
-Calibredb.configure(config: '/home/nina/Sync/code/calibredb/tmp/config.yml')
+Calibredb.configure(config: File.join(Dir.home, 'Sync/code/calibredb/tmp/config.yml')
 
 module Calibredb
   class CLI
