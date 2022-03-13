@@ -29,6 +29,14 @@ module Calibredb
               l.db.values.include?(self.model)
             end.first
           end
+          
+          def join(field)
+            d.map do |row|
+              if %i[title series series_index].include?(field)
+                "#{@title.get} [#{@series.get}, Book #{@series_index.get}]"
+              end
+            end
+          end
 
           def as_json(desc = nil, *associations)
             as_hash(desc, *associations).to_json
@@ -52,7 +60,6 @@ module Calibredb
               meta[:uuid] = row.uuid
               meta[:has_cover] = row.has_cover
               meta[:last_modified] = row.last_modified
-              #meta[:url] = "/#{library.name}/books/#{row.id}"
               fields.each do |a|
                 dataset = a == :formats ? :data_dataset : :"#{a}_dataset"
                 books = nil

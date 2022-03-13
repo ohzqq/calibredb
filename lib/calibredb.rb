@@ -79,7 +79,7 @@ module Calibredb
   end
   
   def connect
-    @libraries.each_key { |library| @libraries[library].connect }
+    @libraries.each_entry { |library| @libraries[library].connect }
   end
 
   def read_config(config)
