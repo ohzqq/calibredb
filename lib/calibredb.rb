@@ -4,8 +4,6 @@ Bundler.require(:default)
 
 require_relative "calibredb/version"
 
-alias lib configatron
-
 module Calibredb
   autoload :CustomColumn, 'calibredb/custom_column'
   autoload :Fields, 'calibredb/fields'
@@ -43,30 +41,30 @@ module Calibredb
       library.connect
       @libraries[name] = library
     end
-    configatron
+    configatron_setup
   end
 
-  def configatron
-    lib.list = Calibredb.libraries.map(&:name)
+  def configatron_setup
+    configatron.list = Calibredb.libraries.map(&:name)
 
-    lib.update = Calibredb.libraries.first.name
-    lib.default = Calibredb.libraries.first.name
+    configatron.update = Calibredb.libraries.first.name
+    configatron.default = Calibredb.libraries.first.name
 
-    lib.current = Configatron::Dynamic.new do
+    configatron.current = Configatron::Dynamic.new do
       library = 
-        if lib.has_key?(:update)
-          lib.default = lib.update
-          self.libraries[lib.update].connect
-          lib.update 
+        if configatron.has_key?(:update)
+          configatron.default = configatron.update
+          self.libraries[configatron.update].connect
+          configatron.update 
         else
-          lib.default
+          configatron.default
         end
       self.libraries[library]
     end
   end
 
   def filter(cmd: nil, args: nil, options: {})
-    lib.update = options.fetch("library") if options.key?("library")
+    configatron.update = options.fetch("library") if options.key?("library")
     Calibredb::Filter.new.results(cmd: cmd, args: args, options: options)
   end
 
@@ -74,7 +72,7 @@ module Calibredb
     self.libraries[library.to_s].db
   end
 
-  def fields(library = lib.current.name)
+  def fields(library = configatron.current.name)
     Calibredb::Fields.new(library)
   end
   

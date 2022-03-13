@@ -2,11 +2,11 @@ module Calibredb
   class Filter
     attr_reader :db
 
-    def initialize(table = :books, library = lib.current.name)
+    def initialize(table = :books, library = configatron.current.name)
       @options = {}
       @library = library
       @table = table.to_s
-      @db = lib.current.db[@table]
+      @db = configatron.current.db[@table]
       @data = @db.data
       @sort = :default
     end
@@ -22,7 +22,7 @@ module Calibredb
     def in(table)
       @updated = true
       @table = table.to_s
-      @db = lib.current.db[@table]
+      @db = configatron.current.db[@table]
       self.data = @db.data
       self
     end
@@ -30,8 +30,8 @@ module Calibredb
     def from(library)
       @updated = true
       @library = library
-      lib.update = library
-      @db = lib.current.db[@table.to_s]
+      configatron.update = library
+      @db = configatron.current.db[@table.to_s]
       self.data = @db.data
       self
     end
