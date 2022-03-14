@@ -30,10 +30,14 @@ module Calibredb
             end.first
           end
           
-          def as_string(desc = nil, *associations)
+          def meta(*associations, desc: nil, format: "hash")
             fields = [:authors] + associations
             d = desc ? data.reverse : data
-            d.map do |row|
+            self.send(:"as_#{format}", d, fields)
+          end
+          
+          def as_string(dataset, fields)
+            dataset.map do |row|
               meta = {}
               meta[:id] = row.id.to_s
               meta[:title] =
@@ -46,28 +50,26 @@ module Calibredb
               fields.each do |a|
                 next if a == :series_index
 
-                if d.columns.include?(a) && !Calibredb.fields.dates_and_times.to_sym.include?(a)
+                if dataset.columns.include?(a) && !Calibredb.fields.dates_and_times.to_sym.include?(a)
                   meta[a] = row.send(a).to_s
                 elsif Calibredb.fields.dates_and_times.to_sym.include?(a)
                   meta[a] = row.send(a).strftime("%F")
                 else
-                  dataset = a == :formats ? :data_dataset : :"#{a}_dataset"
+                  d = a == :formats ? :data_dataset : :"#{a}_dataset"
                   books = nil
-                  meta[a] = row.send(dataset).as_string
+                  meta[a] = row.send(d).as_string
                 end
               end
               meta
             end
           end
 
-          def as_json(desc = nil, *associations)
-            as_hash(desc, *associations).to_json
+          def as_json(dataset, fields)
+            as_hash(dataset, fields).to_json
           end
 
-          def as_hash(desc = nil, *associations)
-            fields = [:authors] + associations
-            d = desc ? data.reverse : data
-            d.map do |row|
+          def as_hash(dataset, fields)
+            dataset.map do |row|
               meta = {}
               meta[:id] = row.id
               meta[:title] = row.title
@@ -76,12 +78,12 @@ module Calibredb
               fields.each do |a|
                 next if a == :series_index
 
-                if d.columns.include?(a)
+                if dataset.columns.include?(a)
                   meta[a] = row.send(a)
                 else
-                  dataset = a == :formats ? :data_dataset : :"#{a}_dataset"
+                  d = a == :formats ? :data_dataset : :"#{a}_dataset"
                   books = nil
-                  meta[a] = row.send(dataset).as_hash(books)
+                  meta[a] = row.send(d).as_hash(books)
                 end
               end
               meta
