@@ -22,3 +22,5 @@ gem "rabl", "~> 0.15.0"
 gem "configatron", "~> 4.5"
 
 gem "commander", "~> 4.6"
+
+gem "config", "~> 4.0"

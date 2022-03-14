@@ -41,7 +41,7 @@ module Calibredb
           order :default, :value
 
           def library
-            Calibredb.libraries[configatron.current.name]
+            Calibredb.libraries[Calibredb.lib.current.name]
           end
 
           def custom_column

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 #
 Bundler.require(:default)
-
 require_relative "calibredb/version"
 
 module Calibredb
@@ -11,7 +10,7 @@ module Calibredb
   autoload :Library, 'calibredb/library'
   autoload :Model, 'calibredb/model'
 
-  attr_accessor :libraries
+  attr_accessor :libraries, :lib
 
   extend self
 
@@ -41,30 +40,23 @@ module Calibredb
       library.connect
       @libraries[name] = library
     end
-    configatron_setup
+    conf_lib
   end
 
-  def configatron_setup
-    configatron.list = Calibredb.libraries.map(&:name)
-
-    configatron.update = Calibredb.libraries.first.name
-    configatron.default = Calibredb.libraries.first.name
-
-    configatron.current = Configatron::Dynamic.new do
-      library = 
-        if configatron.has_key?(:update)
-          configatron.default = configatron.update
-          self.libraries[configatron.update].connect
-          configatron.update 
-        else
-          configatron.default
-        end
-      self.libraries[library]
-    end
+  def conf_lib
+    idk = [:list, :default, :update] + Calibredb.libraries.map(&:name)
+    @lib = Struct.new(*idk) do
+      def current
+        Calibredb.libraries[update]
+      end
+    end.new
+    @lib.list = Calibredb.libraries.map(&:name)
+    @lib.update = Calibredb.libraries.first.name
+    @lib.default = Calibredb.libraries.first.name
   end
 
   def filter(cmd: nil, args: nil, options: {})
-    configatron.update = options.fetch("library") if options.key?("library")
+    Calibredb.lib.update = options.fetch("library") if options.key?("library")
     Calibredb::Filter.new.results(cmd: cmd, args: args, options: options)
   end
 
@@ -72,7 +64,7 @@ module Calibredb
     self.libraries[library.to_s].db
   end
 
-  def fields(library = configatron.current.name)
+  def fields(library = Calibredb.lib.current.name)
     Calibredb::Fields.new(library)
   end
   
