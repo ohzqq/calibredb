@@ -21,6 +21,17 @@ module Calibredb
           default
         end
         
+        def as_string
+          d = data.map(&:value)
+          if Calibredb.fields.collections.to_sym.include?(category)
+            d.join(", ")
+          elsif Calibredb.fields.names.to_sym.include?(category)
+            d.join(" & ")
+          else
+            d.first.to_s
+          end
+        end
+
         def as_json(desc = nil, *fields)
           as_hash(desc, *fields).to_json
         end

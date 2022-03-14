@@ -30,20 +30,33 @@ module Calibredb
             end.first
           end
           
-          def join(field)
-            data.map do |row|
-              if Calibredb.fields.title_and_series.to_sym.include?(field)
+          def as_string(desc = nil, *associations)
+            fields = [:authors] + associations
+            d = desc ? data.reverse : data
+            d.map do |row|
+              meta = {}
+              meta[:id] = row.id.to_s
+              meta[:title] =
                 if row.series_dataset.count == 0
                   row.title
                 else
                   "#{row.title} [#{row.series.first.value}, Book #{row.series_index}]"
                 end
-              elsif Calibredb.fields.collections.to_sym.include?(field)
-                field = field == :formats ? :data : field
-                row.send(field).map(&:value).join(", ")
-              elsif Calibredb.fields.names.to_sym.include?(field)
-                row.send(field).map(&:value).join(" & ")
+              meta[:series_index] = row.series_index.to_s if fields.include?(:series)
+              fields.each do |a|
+                next if a == :series_index
+
+                if d.columns.include?(a) && !Calibredb.fields.dates_and_times.to_sym.include?(a)
+                  meta[a] = row.send(a).to_s
+                elsif Calibredb.fields.dates_and_times.to_sym.include?(a)
+                  meta[a] = row.send(a).strftime("%F")
+                else
+                  dataset = a == :formats ? :data_dataset : :"#{a}_dataset"
+                  books = nil
+                  meta[a] = row.send(dataset).as_string
+                end
               end
+              meta
             end
           end
 
@@ -58,21 +71,18 @@ module Calibredb
               meta = {}
               meta[:id] = row.id
               meta[:title] = row.title
-              meta[:sort] = row.sort
-              meta[:timestamp] = row.timestamp
-              meta[:pubdate] = row.pubdate
               meta[:series_index] = row.series_index if fields.include?(:series)
-              meta[:author_sort] = row.author_sort
-              meta[:isbn] = row.isbn
-              meta[:lccn] = row.lccn
-              meta[:path] = row.path
-              meta[:uuid] = row.uuid
-              meta[:has_cover] = row.has_cover
-              meta[:last_modified] = row.last_modified
+
               fields.each do |a|
-                dataset = a == :formats ? :data_dataset : :"#{a}_dataset"
-                books = nil
-                meta[a] = row.send(dataset).as_hash(books)
+                next if a == :series_index
+
+                if d.columns.include?(a)
+                  meta[a] = row.send(a)
+                else
+                  dataset = a == :formats ? :data_dataset : :"#{a}_dataset"
+                  books = nil
+                  meta[a] = row.send(dataset).as_hash(books)
+                end
               end
               meta
             end
