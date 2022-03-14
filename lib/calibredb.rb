@@ -38,7 +38,7 @@ module Calibredb
       end
     end
     @libraries = libs.new
-    @libraries.list = libraries.keys.map(&:to_sym)
+    @libraries.list = libraries.keys
     @libraries.update = libraries.keys.first
     @libraries.default = libraries.keys.first
 
