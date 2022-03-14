@@ -32,31 +32,25 @@ module Calibredb
   def configure(libraries: nil, config: nil)
     libraries ||= read_config(config)
 
-    libs = Struct.new(*libraries.keys.map(&:to_sym))
+    libs = Struct.new(*libraries.keys.map(&:to_sym) + [:list, :default, :update])do
+      def current
+        Calibredb.libraries[update]
+      end
+    end
     @libraries = libs.new
+    @libraries.list = libraries.keys.map(&:to_sym)
+    @libraries.update = libraries.keys.first
+    @libraries.default = libraries.keys.first
 
     libraries.each do |name, meta|
       library = Library.new(name, meta.transform_keys(&:to_s))
       library.connect
       @libraries[name] = library
     end
-    conf_lib
-  end
-
-  def conf_lib
-    idk = [:list, :default, :update] + Calibredb.libraries.map(&:name)
-    @lib = Struct.new(*idk) do
-      def current
-        Calibredb.libraries[update]
-      end
-    end.new
-    @lib.list = Calibredb.libraries.map(&:name)
-    @lib.update = Calibredb.libraries.first.name
-    @lib.default = Calibredb.libraries.first.name
   end
 
   def filter(cmd: nil, args: nil, options: {})
-    Calibredb.lib.update = options.fetch("library") if options.key?("library")
+    Calibredb.libraries.update = options.fetch("library") if options.key?("library")
     Calibredb::Filter.new.results(cmd: cmd, args: args, options: options)
   end
 
@@ -64,7 +58,7 @@ module Calibredb
     self.libraries[library.to_s].db
   end
 
-  def fields(library = Calibredb.lib.current.name)
+  def fields(library = Calibredb.libraries.current.name)
     Calibredb::Fields.new(library)
   end
   

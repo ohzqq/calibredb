@@ -60,7 +60,7 @@ module Calibredb
 
     def names
       @fields = custom_columns.list.select do |c|
-        lib[@library].db[c].names?
+        Calibredb.libraries[@library].db[c].names?
       end
       @fields << "authors"
       push_fields
@@ -111,7 +111,7 @@ module Calibredb
 
     def one_to_one
       @fields = custom_columns.list.select do |c|
-        !lib[@library].db[c].multiple?
+        !Calibredb.libraries[@library].db[c].multiple?
       end
       @fields << "comments"
       push_fields

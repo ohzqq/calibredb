@@ -34,7 +34,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sqlite3', '~> 1.4.2'
   spec.add_dependency 'yaml', '~> 0.2.0'
   spec.add_dependency 'json', '~> 2.6.1'
-  spec.add_dependency 'configatron', '~> 4.5.1'
 
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
