@@ -63,7 +63,9 @@ module Calibredb
   end
   
   def connect
-    Calibredb.libraries.list.each { |library| Calibredb.libraries[library].connect }
+    Calibredb.libraries.list.each do |library|
+      Calibredb.libraries[library].connect
+    end
   end
 
   def read_config(config)
