@@ -15,9 +15,14 @@ GEM
     highline (2.0.3)
     json (2.6.1)
     minitest (5.15.0)
+    nokogiri (1.13.3-x86_64-linux)
+      racc (~> 1.4)
+    racc (1.6.0)
     rake (13.0.6)
     sequel (5.52.0)
     sqlite3 (1.4.2)
+    sterile (1.0.23)
+      nokogiri (>= 1.11.7)
     yaml (0.2.0)
 
 PLATFORMS
@@ -31,6 +36,7 @@ DEPENDENCIES
   rake (~> 13.0)
   sequel (~> 5.52)
   sqlite3 (~> 1.4)
+  sterile (~> 1.0)
   yaml (~> 0.2.0)
 
 BUNDLED WITH

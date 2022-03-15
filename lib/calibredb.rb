@@ -4,6 +4,7 @@ Bundler.require(:default)
 require_relative "calibredb/version"
 
 module Calibredb
+  autoload :Book, 'calibredb/book'
   autoload :CustomColumn, 'calibredb/custom_column'
   autoload :Fields, 'calibredb/fields'
   autoload :Filter, 'calibredb/filter'

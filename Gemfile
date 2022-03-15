@@ -18,3 +18,5 @@ gem "sqlite3", "~> 1.4"
 gem "sequel", "~> 5.52"
 
 gem "commander", "~> 4.6"
+
+gem "sterile", "~> 1.0"

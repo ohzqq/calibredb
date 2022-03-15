@@ -55,8 +55,13 @@ module Calibredb
         end
 
         def library
-          Calibredb.libraries.select do |l|
-            l.db.values.map(&:object_id).include?(self.model.object_id)
+          Calibredb
+            .libraries
+            .to_h
+            .slice(*Calibredb.libraries.list.map(&:to_sym))
+            .values
+            .select do |l|
+            l.db.map(&:object_id).include?(self.model.object_id)
           end.first
         end
       end

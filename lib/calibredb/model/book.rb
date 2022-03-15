@@ -25,7 +25,12 @@ module Calibredb
           end
 
           def library
-            Calibredb.libraries.select do |l|
+            Calibredb
+              .libraries
+              .to_h
+              .slice(*Calibredb.libraries.list.map(&:to_sym))
+              .values
+              .select do |l|
               l.db.values.include?(self.model)
             end.first
           end
