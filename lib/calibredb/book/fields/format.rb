@@ -6,13 +6,16 @@ module Calibredb
         include Calibredb::Book::Helpers::Dataset
         include Calibredb::Book::Helpers::Formats
 
-        attr_accessor :book, :ext, :data
+        attr_accessor :library, :column, :book, :model, :data, :ext
 
-        def initialize(book, data, ext)
+        def initialize(book, ext)
           @book = book
-          @data = data
+          data = book.data_dataset
+          @data = data.all.select {|f| f.format.downcase == ext.to_s}.first
+          @library = data.library.name
+          @column = :data
+          @model = :books
           @ext = ext
-          @path = File.join(book.path, name)
         end
 
         def path
@@ -20,15 +23,11 @@ module Calibredb
         end
 
         def get
-          @path
+          File.join(@book.path, basename)
         end
 
-        def name
-          "#{row.name}.#{@ext}"
-        end
-
-        def duration
-          @book.duration.first.value
+        def basename
+          "#{@data.name}.#{@ext}"
         end
       end
     end

@@ -4,20 +4,8 @@ module Calibredb
       module Dataset
         extend self
 
-        def model
-          data.model.to_s.split("::")[1..2]
-        end
-
         def column
-          model_index[model.last] || custom_column_index[model.last]
-        end
-
-        def model_index
-          Calibredb::MODELS.transform_values(&:to_s).invert
-        end
-
-        def custom_column_index
-          Calibredb.db(Calibredb.libraries.current.name).custom_columns.transform_values(&:to_s).invert
+          model
         end
 
         def all
@@ -38,24 +26,8 @@ module Calibredb
 
         def as_hash(book_ids: nil, book_total: nil, books: nil)
           data.map do |row|
-            hash = hashify(row)
-            hash[:book_ids] = book_ids(row.id) if book_ids
-            hash[:book_total] = book_total(row.id) if book_total
-            hash[:books] = books(row.id) if books
-            hash
+            hashify(row, book_ids: book_ids, book_total: book_total, books: books)
           end
-        end
-
-        def names(dataset)
-          Book::Fields::Names.new(dataset)
-        end
-
-        def singles(dataset)
-          Book::Fields::Singles.new(dataset)
-        end
-
-        def collections(dataset)
-          Book::Fields::Collections.new(dataset)
         end
 
         def sort_by_book_count(data)

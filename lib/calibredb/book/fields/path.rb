@@ -6,11 +6,13 @@ module Calibredb
         include Calibredb::Book::Helpers::Dataset
         include Calibredb::Book::Helpers::Formats
 
-        attr_accessor :book, :data
+        attr_accessor :data, :library, :model, :book, :path
 
-        def initialize(book, data)
+        def initialize(book, field)
           @book = book
-          @data = data
+          @data = book.send(:"#{field}_dataset")
+          @library = @data.library.name
+          @model = field
           @path = book.path
         end
 
@@ -23,7 +25,7 @@ module Calibredb
         end
 
         def get(format = nil)
-          format ? format_data(@book, format.to_s) : @path
+          format ? Calibredb::Book::Fields::Format.new(@book, format.to_s) : @path
         end
       end
     end

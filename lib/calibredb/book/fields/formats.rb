@@ -6,11 +6,13 @@ module Calibredb
         include Calibredb::Book::Helpers::Dataset
         include Calibredb::Book::Helpers::Formats
 
-        attr_accessor :book, :data
+        attr_accessor :data, :library, :model, :book
 
-        def initialize(book, data)
+        def initialize(book, field)
           @book = book
-          @data = data
+          @data = book.send(:"#{field}_dataset")
+          @library = @data.library.name
+          @model = field
         end
 
         def map
@@ -19,9 +21,7 @@ module Calibredb
 
         def get(format = nil)
           if map.include?(format.to_s)
-            format_data(@book, format.to_s)
-          elsif format.to_s == "audiobook"
-            audiobook
+            Calibredb::Book::Fields::Format.new(@book, format.to_s)
           else
             extensions.join(", ")
           end

@@ -2,8 +2,6 @@ module Calibredb
   module Book
     class Meta
       include Calibredb::Book::Helpers
-      include Calibredb::Book::Helpers::Columns
-      include Calibredb::Book::Helpers::Dataset
       include Calibredb::Book::XML::Formattable
 
       attr_accessor :data, :library, :authors, :tags, :languages, :ratings, :comments, :publishers, :identifiers, :series, :title, :pubdate, :added, :last_modified, :cover, :formats, :path, :series_index, :id, :sort, :author_sort, :lccn, :isbn, :uuid
@@ -50,55 +48,55 @@ module Calibredb
       end
 
       def authors_data
-        names(association_dataset(:authors))
+        Book::Fields::Names.new(@data, :authors)
       end
 
       def tags_data
-        collections(association_dataset(:tags))
+        Book::Fields::Collections.new(@data, :tags)
       end
-
+      
       def languages_data
-        collections(association_dataset(:languages))
+        Book::Fields::Collections.new(@data, :languages)
       end
 
       def ratings_data
-        collections(association_dataset(:ratings))
+        Book::Fields::Collections.new(@data, :ratings)
       end
 
       def identifiers_data
-        collections(association_dataset(:identifiers))
+        Book::Fields::Collections.new(@data, :identifiers)
       end
 
       def pubdate_data
-        dates(:pubdate)
+        Book::Fields::BookColumn.new(@library, @data, :pubdate)
       end
 
       def added_data
-        dates(:timestamp)
+        Book::Fields::BookColumn.new(@library, @data, :timestamp)
       end
 
       def last_modified_data
-        dates(:last_modified)
+        Book::Fields::BookColumn.new(@library, @data, :last_modified)
       end
 
       def path_data
-        Calibredb::Book::Fields::Path.new(data, association_dataset(:data))
+        Calibredb::Book::Fields::Path.new(@data, :data)
       end
 
       def cover_data
-        Calibredb::Book::Fields::Cover.new(data)
+        Calibredb::Book::Fields::Cover.new(@library, @data, :sort)
       end
 
       def formats_data
-        Calibredb::Book::Fields::Formats.new(data, association_dataset(:data))
+        Calibredb::Book::Fields::Formats.new(@data, :data)
       end
 
       def comments_data
-        singles(association_dataset(:comments))
+        Book::Fields::Singles.new(@data, :comments)
       end
 
       def publishers_data
-        singles(association_dataset(:publishers))
+        Book::Fields::Singles.new(@data, :publishers)
       end
 
       def series_data
@@ -115,45 +113,45 @@ module Calibredb
 
       def title_series_index
         Calibredb::Book::Fields::TitleSeriesIndex.new(
-          title: misc(:title),
-          series: singles(association_dataset(:series)),
-          series_index: misc(:series_index)
+          title: Book::Fields::BookColumn.new(@library, @data, :title),
+          series: Book::Fields::Singles.new(@data, :series),
+          series_index: Book::Fields::BookColumn.new(@library, @data, :series_index)
         )
       end
 
       def sort_data
-        misc(:sort)
+        Book::Fields::BookColumn.new(@library, @data, :sort)
       end
 
       def id_data
-        misc(:id)
+        Book::Fields::BookColumn.new(@library, @data, :id)
       end
 
       def author_sort_data
-        misc(:author_sort)
+        Book::Fields::BookColumn.new(@library, @data, :author_sort)
       end
 
       def lccn_data
-        misc(:lccn)
+        Book::Fields::BookColumn.new(@library, @data, :lccn)
       end
 
       def isbn_data
-        misc(:isbn)
+        Book::Fields::BookColumn.new(@library, @data, :isbn)
       end
 
       def uuid_data
-        misc(:uuid)
+        Book::Fields::BookColumn.new(@library, @data, :uuid)
       end
 
       def custom
         Calibredb.libraries[@library].custom_columns.each do |col|
           self.class.send(:define_method, col) do
             if Calibredb.fields.names.to_sym.include?(col)
-              names(association_dataset(col))
+              Book::Fields::Names.new(@data, col)
             elsif Calibredb.fields.collections.to_sym.include?(col)
-              collections(association_dataset(col))
+              Book::Fields::Collections.new(@data, col)
             else
-              singles(association_dataset(col))
+              Book::Fields::Singles.new(@data, col)
             end
           end
         end

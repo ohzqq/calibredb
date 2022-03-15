@@ -15,7 +15,17 @@ module Calibredb
         end
 
         def path
-          File.join(library, column, id.to_s)
+          id.to_h {|i| [i, File.join(library.to_s, column.to_s, i.to_s)]}
+        end
+
+        def hashify(row, book_ids: nil, book_total: nil, books: nil)
+          meta = {}
+          meta[:id] = row.id
+          meta[:value] = row.value.smart_format
+          meta[:book_ids] = book_ids(row.id) if book_ids
+          meta[:book_total] = book_total(row.id) if book_total
+          meta[:books] = books(row.id) if books
+          return meta
         end
 
         def books(a_id = nil)
@@ -29,13 +39,6 @@ module Calibredb
 
         def book_total(a_id = nil)
           books(a_id).count
-        end
-
-        def hashify(row)
-          meta = {}
-          meta[:id] = row.id
-          meta[:value] = row.value.smart_format
-          return meta
         end
       end
     end

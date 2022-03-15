@@ -4,14 +4,16 @@ module Calibredb
     module Fields
       class Cover
         include Calibredb::Book::Helpers
-        include Calibredb::Book::Helpers::Dataset
         include Calibredb::Book::Helpers::Formats
 
-        attr_accessor :book, :ext, :data
+        attr_accessor :library, :column, :book, :model, :data, :ext
 
-        def initialize(book)
+        def initialize(library, book, field)
           @book = book
-          @data = book
+          @data = book[field]
+          @library = library
+          @column = field
+          @model = :books
           @ext = 'jpg'
         end
 
