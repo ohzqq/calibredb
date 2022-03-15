@@ -53,6 +53,7 @@ module Calibredb
                 if dataset.columns.include?(a) && !Calibredb.fields.dates_and_times.to_sym.include?(a)
                   meta[a] = row.send(a).to_s
                 elsif Calibredb.fields.dates_and_times.to_sym.include?(a)
+                  a = a == "added" ? "timestamp" : a
                   meta[a] = row.send(a).strftime("%F")
                 else
                   d = a == :formats ? :data_dataset : :"#{a}_dataset"
@@ -79,6 +80,7 @@ module Calibredb
                 next if a == :series_index
 
                 if dataset.columns.include?(a)
+                  a = a == "added" ? "timestamp" : a
                   meta[a] = row.send(a)
                 else
                   d = a == :formats ? :data_dataset : :"#{a}_dataset"
