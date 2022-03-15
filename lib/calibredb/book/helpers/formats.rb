@@ -29,7 +29,7 @@ module Calibredb
         end
         
         def as_hash(book_ids: nil, book_total: nil)
-          format_dataset.map do |r|
+          data.map do |r|
             hash = hashify(r)
             hash[:book_ids] = [r[:book]] if book_ids
             hash[:book_total] = 1 if book_total
