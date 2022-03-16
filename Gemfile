@@ -20,3 +20,5 @@ gem "sequel", "~> 5.52"
 gem "commander", "~> 4.6"
 
 gem "sterile", "~> 1.0"
+
+gem "pathname", "~> 0.2.0"

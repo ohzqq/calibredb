@@ -5,7 +5,9 @@ require_relative "calibredb/version"
 
 module Calibredb
   autoload :Book, 'calibredb/book'
+  autoload :Meta, 'calibredb/meta'
   autoload :CustomColumn, 'calibredb/custom_column'
+  autoload :DatasetMethods, 'calibredb/dataset_methods'
   autoload :Fields, 'calibredb/fields'
   autoload :Filter, 'calibredb/filter'
   autoload :Library, 'calibredb/library'

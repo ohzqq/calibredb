@@ -2,6 +2,7 @@ module Calibredb
   module CustomColumn
     class Model
       include Calibredb::Model
+      include Calibredb::DatasetMethods::Associations
       include Calibredb
 
       attr_accessor :model
@@ -27,7 +28,7 @@ module Calibredb
       end
 
       def dataset_module
-        shared_dataset_modules
+        all_associations
 
         unless @model.columns.include?(:book)
           many_to_many_modules
@@ -50,6 +51,18 @@ module Calibredb
 
           def row
             custom_column[model.table_name.to_s.split('_').last.to_i]
+          end
+          
+          def to_s
+            if multiple?
+              if names?
+                map(&:value).map(&:smart_format).join(" & ")
+              else
+                map(&:value).map(&:smart_format).join(", ")
+              end
+            else
+              first.value.smart_format
+            end
           end
 
           def label

@@ -7,7 +7,6 @@ module Calibredb
     autoload :Datum, 'calibredb/model/datum'
     autoload :Identifier, 'calibredb/model/identifier'
     autoload :Language, 'calibredb/model/language'
-    autoload :NameColumn, 'calibredb/model/name_column'
     autoload :Preference, 'calibredb/model/preference'
     autoload :Publisher, 'calibredb/model/publisher'
     autoload :Rating, 'calibredb/model/rating'

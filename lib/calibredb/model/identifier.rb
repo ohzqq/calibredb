@@ -2,7 +2,7 @@
 module Calibredb
   module Model
     class Identifier
-      include Calibredb::Model
+      include Calibredb::DatasetMethods::Associations
 
       def initialize(library)
         @library = library.models
@@ -26,7 +26,8 @@ module Calibredb
             :identifiers
           end
         end
-        shared_dataset_modules
+        all_associations
+        collections
       end
     end
   end

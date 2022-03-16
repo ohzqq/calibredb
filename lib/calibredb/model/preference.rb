@@ -1,7 +1,7 @@
 module Calibredb
   module Model
     class Preference
-      include Calibredb::Model
+      include Calibredb::DatasetMethods::Associations
 
       def initialize(library)
         @library = library.models

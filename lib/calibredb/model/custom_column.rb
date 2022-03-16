@@ -2,7 +2,7 @@
 module Calibredb
   module Model
     class CustomColumn
-      include Calibredb::Model
+      include Calibredb::DatasetMethods::Associations
 
       def initialize(library)
         @library = library.models
@@ -21,7 +21,7 @@ module Calibredb
             as_hash(:label, :id)
           end
         end
-        shared_dataset_modules
+        all_associations
       end
     end
   end

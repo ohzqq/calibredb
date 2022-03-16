@@ -2,7 +2,7 @@
 module Calibredb
   module Model
     class Publisher
-      include Calibredb::Model::NameColumn
+      include Calibredb::DatasetMethods::Associations
 
       def initialize(library)
         @library = library.models
@@ -20,7 +20,9 @@ module Calibredb
       end
 
       def dataset_module
-        name_dataset_module
+        tables_with_name_column
+        singles
+        all_associations
         @model.dataset_module do
           def category
             :publishers

@@ -118,11 +118,12 @@ module Calibredb
       filtered =
         if @options.key?("format")
           update.meta(*@fields, desc: @desc, format: @options.fetch("format"))
+          #update.meta(*@fields, desc: @desc, format: @options.fetch("format"))
         else
           update
         end
 
-      return @library, @table, filtered
+      return @library, @table, update
     end
 
     def update

@@ -1,7 +1,7 @@
 module Calibredb
   module Model
     class Rating
-      include Calibredb::Model
+      include Calibredb::DatasetMethods::Associations
 
       def initialize(library)
         @library = library.models
@@ -19,7 +19,8 @@ module Calibredb
       end
 
       def dataset_module
-        shared_dataset_modules
+        all_associations
+        collections
         @model.def_column_alias(:value, :rating)
         @model.dataset_module do
           order :default, :rating

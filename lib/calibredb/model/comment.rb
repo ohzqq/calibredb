@@ -1,7 +1,7 @@
 module Calibredb
   module Model
     class Comment
-      include Calibredb::Model
+      include Calibredb::DatasetMethods::Associations
 
       def initialize(library)
         @library = library.models
@@ -17,6 +17,8 @@ module Calibredb
       end
 
       def dataset_module
+        all_associations
+        singles
         @model.def_column_alias(:value, :text)
         @model.dataset_module do
           order :default, :text
@@ -25,7 +27,6 @@ module Calibredb
             :comments
           end
         end
-        shared_dataset_modules
       end
     end
   end

@@ -4,7 +4,7 @@ module Calibredb
 
     def initialize(name, meta)
       @name = name
-      @path = meta.fetch("path")
+      @path = Pathname.new(meta.fetch("path"))
       @audiobooks = meta.fetch("audiobooks")
       @custom_columns = []
     end

@@ -14,6 +14,7 @@ module Calibredb
       end
 
       def dataset_module
+        @model.def_column_alias(:added, :timestamp)
         @model.dataset_module do
           order :default, :sort
           order :modified, :last_modified
@@ -35,11 +36,15 @@ module Calibredb
             end.first
           end
           
-          def meta(*associations, desc: nil, format: "hash")
-            fields = [:authors] + associations
-            d = desc ? data.reverse : data
-            self.send(:"as_#{format}", d, fields)
+          def meta
+            Calibredb::Book::Books.new(self, library.name)
           end
+          
+          #def meta(*associations, desc: nil, format: "hash")
+          #  fields = [:authors] + associations
+          #  d = desc ? data.reverse : data
+          #  self.send(:"as_#{format}", d, fields)
+          #end
           
           def as_string(dataset, fields)
             dataset.map do |row|
@@ -73,8 +78,14 @@ module Calibredb
           def as_json(dataset, fields)
             as_hash(dataset, fields).to_json
           end
+          
+          def metadata
+            map {|b| Calibredb::Meta.new(b, library)}
+          end
 
-          def as_hash(dataset, fields)
+          def as_hash(*associations, desc: nil, format: "hash")
+            fields = [:authors] + associations
+            dataset = desc ? data.reverse : data
             dataset.map do |row|
               meta = {}
               meta[:id] = row.id
@@ -85,7 +96,6 @@ module Calibredb
                 next if a == :series_index
 
                 if dataset.columns.include?(a)
-                  a = a == "added" ? "timestamp" : a
                   meta[a] = row.send(a)
                 else
                   d = a == :formats ? :data_dataset : :"#{a}_dataset"
