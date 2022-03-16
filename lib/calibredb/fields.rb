@@ -31,7 +31,7 @@ module Calibredb
     end
 
     def book
-      @fields = book_columns.list - %w[has_cover flags]
+      @fields = book_columns.list - %w[has_cover flags] - dates_and_times.list
       @fields.delete("timestamp")
       @fields << "added"
       push_fields

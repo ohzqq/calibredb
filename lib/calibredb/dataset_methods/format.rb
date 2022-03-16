@@ -14,6 +14,10 @@ module Calibredb
         absolute(basename)
       end
       
+      def as_hash
+        @formats.as_hash
+      end
+      
       def absolute(basename)
         library.join(book, basename)
       end

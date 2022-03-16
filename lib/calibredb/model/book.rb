@@ -84,7 +84,14 @@ module Calibredb
           end
 
           def as_hash(*associations, desc: nil, format: "hash")
-            fields = [:authors] + associations
+            associations = associations.map(&:to_sym)
+            fields =
+              if associations.include?(:all)
+                associations.delete(:all)
+                Calibredb.fields.viewable.to_sym
+              else
+                [:authors] + associations.map(&:to_sym)
+              end
             dataset = desc ? data.reverse : data
             dataset.map do |row|
               meta = {}
@@ -95,7 +102,7 @@ module Calibredb
               fields.each do |a|
                 next if a == :series_index
 
-                if dataset.columns.include?(a)
+                if dataset.columns.include?(a) || a == :added
                   meta[a] = row.send(a)
                 else
                   d = a == :formats ? :data_dataset : :"#{a}_dataset"

@@ -61,9 +61,9 @@ module Calibredb
     end
     
     def dates
-      Struct.new(:data) do
+      Struct.new(:date) do
         def to_s
-          data == null ? "" : data.strftime("%F")
+          date == null ? "" : date.strftime("%F")
         end
 
         def null
@@ -74,19 +74,19 @@ module Calibredb
 
     def pubdate_data
       d = dates.new
-      d.data = @data.pubdate
+      d.date = @data.pubdate
       d
     end
 
     def added_data
       d = dates.new
-      d.data = @data.added
+      d.date = @data.added
       d
     end
 
     def last_modified_data
       d = dates.new
-      d.data = @data.last_modified
+      d.date = @data.last_modified
       d
     end
 
@@ -133,7 +133,7 @@ module Calibredb
     end
 
     def series_index_data
-      @data.series_index
+      @data.series_index.to_s
     end
 
     def title_series_index
@@ -149,7 +149,7 @@ module Calibredb
     end
 
     def id_data
-      @data.id
+      @data.id.to_s
     end
 
     def author_sort_data
@@ -176,8 +176,20 @@ module Calibredb
       end
     end
 
-    def as_hash(field = nil, plain: nil)
-      field ? self.send(field).as_hash : book_to_hash(plain)
+    def as_hash(*associations, desc: nil)
+      h = {}
+      Calibredb.fields.associations.to_sym.each do |a|
+        h[a] = self.send(a).as_hash
+      end
+      Calibredb.fields.book.to_sym.each do |c|
+        h[c] = self.send(c)
+      end
+      Calibredb.fields.dates_and_times.to_sym.each do |d|
+        h[d] = self.send(d).to_s
+      end
+      h[:title] = h[:title].to_s
+      h[:path] = h[:path].to_path
+      h
     end
 
     def as_ini

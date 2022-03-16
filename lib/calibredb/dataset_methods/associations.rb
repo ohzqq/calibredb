@@ -61,8 +61,8 @@ module Calibredb
             d = desc ? data.reverse : data
             d.map do |row|
               meta = {}
+              meta[:id] = row.id.to_s
               meta[:value] = row.value
-              meta[:id] = row.id
               if fields.include?("all")
                 if Calibredb.fields.many_books_to_many.to_sym.include?(category) ||
                     Calibredb.fields.one_to_many_books.to_sym.include?(category)
