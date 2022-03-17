@@ -105,7 +105,12 @@ module Calibredb
         if cmd == :list
           args.first if args
         elsif options.key?("ids")
-          options.fetch("ids").split(",")
+          case options["ids"]
+          when String
+            options.fetch("ids").split(",")
+          when Array
+            options["ids"]
+          end
         end
 
       @query =
