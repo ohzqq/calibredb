@@ -11,7 +11,11 @@ module Calibredb
       
       def get(format)
         basename = format == :cover ? "cover.jpg": @formats.where(format: format.to_s.upcase).basename
-        absolute(basename)
+        relative(basename)
+      end
+      
+      def relative(basename)
+        book.join(basename)
       end
       
       def as_hash
