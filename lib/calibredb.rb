@@ -52,7 +52,10 @@ module Calibredb
   end
 
   def filter(cmd: nil, args: nil, options: {})
-    Calibredb.libraries.update = options.fetch("library") if options.key?("library")
+    if options.key?("library")
+      Calibredb.libraries.update = options.fetch("library")
+    end
+
     Calibredb::Filter.new.results(cmd: cmd, args: args, options: options)
   end
 

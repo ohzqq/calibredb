@@ -6,7 +6,7 @@ module Calibredb
       @options = {}
       @library = library
       @table = table.to_s
-      @db = Calibredb.libraries.current.db[@table]
+      @db = Calibredb.libraries[library].db[@table]
       @data = @db.data
       @sort = :default
     end
@@ -123,7 +123,7 @@ module Calibredb
           update
         end
 
-      return @library, @table, update
+      return update
     end
 
     def update
