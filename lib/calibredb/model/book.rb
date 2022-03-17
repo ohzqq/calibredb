@@ -42,6 +42,10 @@ module Calibredb
             meta.map {|b| b.as_hash}
           end
 
+          def to_s
+            meta.map {|b| b.to_s}
+          end
+
           def category
             :books
           end

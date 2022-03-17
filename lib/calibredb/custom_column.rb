@@ -16,6 +16,7 @@ module Calibredb
     end
 
     def add_to_models(library, custom)
+      library.custom_columns.clear
       library.custom_columns << custom.keys.first
       library.custom_columns.uniq
       library.models = library.models.merge(custom)
