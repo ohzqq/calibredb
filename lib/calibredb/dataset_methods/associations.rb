@@ -35,7 +35,7 @@ module Calibredb
       def singles
         @model.dataset_module do
           def to_s
-            first.value.smart_format
+            first.nil? ? "" : first.value.smart_format
           end
         end
       end

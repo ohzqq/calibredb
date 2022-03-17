@@ -1,8 +1,6 @@
 module Calibredb
   module Model
     class Book
-      include Calibredb::Model
-
       def initialize(library)
         @library = library.models
         @model = library.models[:books]
@@ -37,81 +35,11 @@ module Calibredb
           end
           
           def meta
-            Calibredb::Book::Books.new(self, library.name)
+            map {|b| Calibredb::Book.new(b, library)}
           end
           
-          #def meta(*associations, desc: nil, format: "hash")
-          #  fields = [:authors] + associations
-          #  d = desc ? data.reverse : data
-          #  self.send(:"as_#{format}", d, fields)
-          #end
-          
-          def as_string(dataset, fields)
-            dataset.map do |row|
-              meta = {}
-              meta[:id] = row.id.to_s
-              meta[:title] =
-                if row.series_dataset.count == 0
-                  row.title
-                else
-                  "#{row.title} [#{row.series.first.value}, Book #{row.series_index}]"
-                end
-              meta[:series_index] = row.series_index.to_s if fields.include?(:series)
-              fields.each do |a|
-                next if a == :series_index
-
-                if dataset.columns.include?(a) && !Calibredb.fields.dates_and_times.to_sym.include?(a)
-                  meta[a] = row.send(a).to_s
-                elsif Calibredb.fields.dates_and_times.to_sym.include?(a)
-                  a = a == "added" ? "timestamp" : a
-                  meta[a] = row.send(a).strftime("%F")
-                else
-                  d = a == :formats ? :data_dataset : :"#{a}_dataset"
-                  books = nil
-                  meta[a] = row.send(d).as_string
-                end
-              end
-              meta
-            end
-          end
-
-          def as_json(dataset, fields)
-            as_hash(dataset, fields).to_json
-          end
-          
-          def metadata
-            map {|b| Calibredb::Meta.new(b, library)}
-          end
-
-          def as_hash(*associations, desc: nil, format: "hash")
-            associations = associations.map(&:to_sym)
-            fields =
-              if associations.include?(:all)
-                associations.delete(:all)
-                Calibredb.fields.viewable.to_sym
-              else
-                [:authors] + associations.map(&:to_sym)
-              end
-            dataset = desc ? data.reverse : data
-            dataset.map do |row|
-              meta = {}
-              meta[:id] = row.id
-              meta[:title] = row.title
-              meta[:series_index] = row.series_index if fields.include?(:series)
-
-              fields.each do |a|
-                next if a == :series_index
-
-                if dataset.columns.include?(a) || a == :added
-                  meta[a] = row.send(a)
-                else
-                  d = a == :formats ? :data_dataset : :"#{a}_dataset"
-                  books = nil
-                  meta[a] = row.send(d).as_hash(books)
-                end
-              end
-              meta
-            end
+          def as_hash
+            meta.map {|b| b.as_hash}
           end
 
           def category
@@ -197,7 +125,6 @@ module Calibredb
           key: :book,
           class: @library[:identifiers]
         )
-
       end
     end
   end
