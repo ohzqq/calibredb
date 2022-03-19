@@ -28,6 +28,8 @@ module Calibredb
       global_option("-F", "--fields LIST", "Comma separated list of fields.")
       global_option("-S", "--sort SMTH")
       global_option("-D", "--desc")
+      global_option("-L", "--limit INT")
+      global_option("-P", "--page INT")
       global_option("--ids")
 
       command :"list libraries" do |c|

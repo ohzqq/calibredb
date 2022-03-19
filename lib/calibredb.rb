@@ -55,6 +55,8 @@ module Calibredb
     if options.key?("library")
       Calibredb.libraries.update = options.fetch("library")
     end
+    
+    options = options.transform_keys(&:to_s)
 
     Calibredb::Filter.new.results(cmd: cmd, args: args, options: options)
   end
