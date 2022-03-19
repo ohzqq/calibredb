@@ -5,7 +5,7 @@ module Calibredb
     Pagy::DEFAULT[:url] = "/"
     Pagy::DEFAULT[:metadata] = %i[count page items outset params pages from to]
 
-    attr_reader :db, :pagy_data
+    attr_reader :db
 
     def initialize(table = :books, library = Calibredb.libraries.current.name)
       @options = {}
@@ -89,6 +89,10 @@ module Calibredb
       @pagy_data, dataset = pagy(data)
       self.data = dataset
       self
+    end
+    
+    def pagy_data
+      @pagy_data
     end
     
     def pagy_meta
