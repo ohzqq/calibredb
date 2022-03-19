@@ -42,15 +42,26 @@ module Calibredb
           order :default, :value
 
           def library
-            Calibredb.libraries[Calibredb.libraries.current.name]
+            Calibredb
+              .libraries
+              .to_h
+              .slice(*Calibredb.libraries.list.map(&:to_sym))
+              .values
+              .select do |l|
+              l.db.values.include?(self.model)
+            end.first
           end
 
           def custom_column
             library.db.custom_columns
           end
+          
+          def table
+            self.first_source_table
+          end
 
           def row
-            custom_column[model.table_name.to_s.split('_').last.to_i]
+            custom_column[table.to_s.split('_').last.to_i]
           end
           
           def to_s
