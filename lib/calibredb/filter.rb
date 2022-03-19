@@ -1,5 +1,10 @@
 module Calibredb
   class Filter
+    include Pagy::Backend
+
+    Pagy::DEFAULT[:url] = "/"
+    Pagy::DEFAULT[:metadata] = %i[count page items outset params pages from to]
+
     attr_reader :db
 
     def initialize(table = :books, library = Calibredb.libraries.current.name)
@@ -71,6 +76,50 @@ module Calibredb
       self.data = sort_books if books?
       self
     end
+    
+    def params
+      p = {}
+      p["page"] = @page
+      p["items"] = @limit
+      p
+    end
+    
+    def paginate
+      @updated = true
+      @pagy_data, dataset = pagy(data)
+      self.data = dataset
+      self
+    end
+    
+    def pagy_meta
+      p = {}
+      p[:count] = @pagy_data.count
+      p[:page] = @pagy_data.page
+      p[:items] = @pagy_data.items
+      p[:pages] = @pagy_data.pages
+      p[:offset] = @pagy_data.offset
+      p
+    end
+    
+    def pagy_get_vars(collection, vars)
+      {
+        count: collection.count,
+        page: params["page"],
+        items: params["items"]
+      }
+    end
+
+    def limit(num = 25)
+      @updated = true
+      @limit = num
+      self
+    end
+    
+    def page(num = 1)
+      @updated = true
+      @page = num
+      self
+    end
 
     def books?
       @table == "books"
@@ -89,6 +138,7 @@ module Calibredb
       self.by(@sort) && @sort = nil if @sort
       self.letter(@alpha) if @alpha
       self.desc if @desc
+      self.paginate if @page || @limit
       self
     end
 
@@ -100,6 +150,8 @@ module Calibredb
       @fields = options.fetch("fields").split(",").map(&:to_sym) if options.key?("fields")
       @sort = options.fetch("sort").to_sym if options.key?("sort")
       @desc = :desc if options.key?("desc")
+      @page = options.fetch("page") if options.key?("page")
+      @limit = options.fetch("limit") if options.key?("limit")
 
       @ids =
         if cmd == :list
@@ -128,7 +180,16 @@ module Calibredb
           update
         end
 
-      return update
+      return self
+    end
+    
+    def as_hash
+      @data.as_hash
+    end
+
+    def as_json
+      d = {@table => @data.as_hash}
+      @page || @limit ? d.merge(pagy_meta) : d
     end
 
     def update

@@ -14,7 +14,7 @@ module Calibredb
       program :version, Calibredb::VERSION
       program :description, "CLI tool for getting data from a Calibre library."
       
-      global_option("-l", "--library NAME", "library name") {|n| Calibredb.lib.update = n}
+      global_option("-l", "--library NAME", "library name") {|n| Calibredb.libraries.update = n}
       global_option("-a", "--authors")
       global_option("-n", "--narrators")
       global_option("-t", "--tags")
@@ -72,9 +72,8 @@ module Calibredb
       define_method(cmd) do |args, options|
         options = options.__hash__
         options[:category] = __method__
-        options[:json] = true
-        l, c, d = Calibredb.filter(cmd: :list, args: args, options: options)
-        puts d
+        d = Calibredb.filter(cmd: :list, args: args, options: options)
+        puts d.as_hash.to_json
       end
     end
 
@@ -82,12 +81,12 @@ module Calibredb
       options = options.__hash__
       options[:category] = __method__
       options[:json] = true
-      l, c, d = Calibredb.filter(cmd: :list, args: args, options: options)
+      d = Calibredb.filter(cmd: :list, args: args, options: options)
       puts d
     end
 
     def libraries(args, options)
-      libs = {libraries: Calibredb.lib.list}
+      libs = {libraries: Calibredb.libraries.list}
       puts libs.to_json
     end
   end

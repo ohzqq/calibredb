@@ -22,3 +22,6 @@ gem "commander", "~> 4.6"
 gem "sterile", "~> 1.0"
 
 gem "pathname", "~> 0.2.0"
+
+gem "pagy", "~> 5.10"
+gem "pagy", "~> 5.10", require: %(pagy/extras/standalone)
