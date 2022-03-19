@@ -189,7 +189,7 @@ module Calibredb
 
     def as_json
       d = {@table => @data.as_hash}
-      @page || @limit ? d.merge(pagy_meta) : d
+      @page || @limit ? d.merge(pagy_meta).to_json : d.to_json
     end
 
     def update
