@@ -176,14 +176,7 @@ module Calibredb
           options.fetch("q")
         end
 
-      filtered =
-        if @options.key?("format")
-          #update.meta(*@fields, desc: @desc, format: @options.fetch("format"))
-          #update.as_hash(*@fields, desc: @desc, format: @options.fetch("format"))
-        else
-          update
-        end
-
+      update
       return self
     end
     
